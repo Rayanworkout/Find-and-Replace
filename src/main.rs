@@ -1,5 +1,3 @@
-
-
 use anyhow::Result;
 use clap::Parser;
 use fnr::{

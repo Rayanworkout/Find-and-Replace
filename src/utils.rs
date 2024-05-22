@@ -34,7 +34,6 @@ mod tests {
     fn test_is_directory() {
         let path = PathBuf::from("src");
         assert!(path.is_directory().unwrap());
-
     }
 
     #[test]

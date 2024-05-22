@@ -1,6 +1,7 @@
-use crate::utils::PathExt;
+// use crate::utils::PathExt;
 use anyhow::{Context, Result};
-use std::fs::{read_dir, File};
+use ignore::Walk;
+use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 
@@ -38,30 +39,36 @@ pub fn search_in_file(path: &PathBuf, pattern: &str) -> Result<()> {
     Ok(())
 }
 
-pub fn search_in_folder(path: &PathBuf, omit: &Option<Vec<PathBuf>>, pattern: &str) -> Result<()> {
+pub fn search_in_folder(
+    path: &PathBuf,
+    _omit: &Option<Vec<PathBuf>>,
+    _pattern: &str,
+) -> Result<()> {
     // Here, we collect all the paths in the folder
     // with a Ok() result
 
-    let mut folder: Vec<PathBuf> = read_dir(&path)
-        .with_context(|| format!("Failed to read the following folder: {:?}", &path))?
-        .filter_map(Result::ok)
-        .map(|entry| entry.path())
-        .collect();
-
     // Then we keep only those who aren't omitted
-    if let Some(to_omit) = omit {
-        folder.retain(|path| !path.should_omit(&to_omit));
-    }
+    // if let Some(to_omit) = omit {
+    //     folder.retain(|path| !path.should_omit(&to_omit));
+    // }
 
-    for path in folder {
-        match path.is_directory() {
-            Some(result) => match result {
-                true => search_in_folder(&path, &omit, &pattern)?,
-                false => search_in_file(&path, &pattern)?,
-            },
-            None => eprintln!("Failed to read the following path: {:?}", path),
+    for entry in Walk::new(&path) {
+        match entry {
+            Ok(data) => println!("{:?}", data.path().is_file()),
+            Err(error) => eprintln!("Error: {}", error),
         }
     }
+
+    // match entry {
+    //     Ok(entry) => match entry.into_path().is_directory() {
+    //         Some(result) => match result {
+    //             true => search_in_folder(&path, &omit, &pattern)?,
+    //             false => search_in_file(&path, &pattern)?,
+    //         },
+    //         None => eprintln!("Failed to read the following path: {:?}", path),
+    //     },
+    //     Err(err) => eprintln!("ERROR: {}", err),
+    // }
 
     Ok(())
 }
