@@ -1,24 +1,19 @@
-use anyhow::{Context, Result};
 use std::fs;
 use std::path::PathBuf;
 
 pub trait PathExt {
-    fn is_directory(&self) -> Result<bool>;
+    fn is_directory(&self) -> Option<bool>;
     fn should_omit(&self, omit: &[PathBuf]) -> bool;
 }
 
 impl PathExt for PathBuf {
     /// Check if a given path is a directory
     /// Returns true if path is directory, otherwise false
-    fn is_directory(&self) -> Result<bool> {
-        let metadata = fs::metadata(self).with_context(|| {
-            format!(
-                "Failed to check if the following path is a directory: {:?}",
-                self
-            )
-        })?;
-
-        Ok(metadata.is_dir())
+    fn is_directory(&self) -> Option<bool> {
+        match fs::metadata(&self) {
+            Err(_) => None, // Ignore the error and return None
+            Ok(metadata) => Some(metadata.is_dir()),
+        }
     }
 
     /// Function to check if a specific path should be omitted
@@ -39,6 +34,7 @@ mod tests {
     fn test_is_directory() {
         let path = PathBuf::from("src");
         assert!(path.is_directory().unwrap());
+
     }
 
     #[test]

@@ -10,9 +10,12 @@ fn main() -> Result<()> {
     // Gather args passed with the program
     let args = Cli::parse();
 
-    match args.path.is_directory()? {
-        true => search_in_folder(&args)?,
-        false => search_in_file(&args)?,
+    match args.path.is_directory() {
+        Some(result) => match result {
+            true => search_in_folder(&args)?,
+            false => search_in_file(&args)?,
+        },
+        None => eprintln!("Failed to read the following path: {:?}", args.path),
     }
 
     Ok(())

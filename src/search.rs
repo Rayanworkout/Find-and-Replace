@@ -63,9 +63,12 @@ pub fn search_in_folder(args: &Cli) -> Result<()> {
             verbose: args.verbose,
         };
 
-        match path.is_directory()? {
-            true => search_in_folder(&cli)?,
-            false => search_in_file(&cli)?,
+        match path.is_directory() {
+            Some(result) => match result {
+                true => search_in_folder(&cli)?,
+                false => search_in_file(&cli)?,
+            },
+            None => eprintln!("Failed to read the following path: {:?}", path),
         }
     }
 
