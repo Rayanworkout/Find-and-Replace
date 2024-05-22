@@ -4,8 +4,6 @@ use std::fs::{read_dir, File};
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 
-use crate::args::Cli;
-
 /// Function to get the matches in a file
 /// We enumerate over the lines of the file
 /// and filter the lines that contain the pattern
@@ -23,50 +21,43 @@ fn get_matches(file: BufReader<File>, pattern: &str) -> Vec<(usize, String)> {
         .collect()
 }
 
-pub fn search_in_file(args: &Cli) -> Result<()> {
-    let file =
-        File::open(&args.path).with_context(|| format!("could not read file `{:?}`", args.path))?;
+pub fn search_in_file(path: &PathBuf, pattern: &str) -> Result<()> {
+    let file = File::open(&path).with_context(|| format!("could not read file `{:?}`", &path))?;
 
     let reader = BufReader::new(file);
 
-    let matches = get_matches(reader, &args.old_pattern);
+    let matches = get_matches(reader, &pattern);
 
     if !matches.is_empty() {
-        println!("\n{:?}", &args.path);
+        println!("\n{:?}", path);
         for (line_number, content) in matches {
-            println!("\nLine {}: {}", line_number, content);
+            println!("Line {}: {}\n", line_number, content);
         }
     }
 
     Ok(())
 }
 
-pub fn search_in_folder(args: &Cli) -> Result<()> {
+pub fn search_in_folder(path: &PathBuf, omit: &Option<Vec<PathBuf>>, pattern: &str) -> Result<()> {
     // Here, we collect all the paths in the folder
     // with a Ok() result
-    let mut folder: Vec<PathBuf> = read_dir(&args.path)
-        .with_context(|| format!("Failed to read the following folder: {:?}", &args.path))?
+
+    let mut folder: Vec<PathBuf> = read_dir(&path)
+        .with_context(|| format!("Failed to read the following folder: {:?}", &path))?
         .filter_map(Result::ok)
         .map(|entry| entry.path())
         .collect();
 
     // Then we keep only those who aren't omitted
-    if let Some(omit) = &args.omit {
-        folder.retain(|path| !path.should_omit(omit));
+    if let Some(to_omit) = omit {
+        folder.retain(|path| !path.should_omit(&to_omit));
     }
 
     for path in folder {
-        let cli = Cli {
-            path: path.clone(),
-            old_pattern: args.old_pattern.clone(),
-            omit: args.omit.clone(),
-            verbose: args.verbose,
-        };
-
         match path.is_directory() {
             Some(result) => match result {
-                true => search_in_folder(&cli)?,
-                false => search_in_file(&cli)?,
+                true => search_in_folder(&path, &omit, &pattern)?,
+                false => search_in_file(&path, &pattern)?,
             },
             None => eprintln!("Failed to read the following path: {:?}", path),
         }
@@ -82,26 +73,18 @@ mod tests {
 
     #[test]
     fn test_search_in_file() {
-        let args = Cli {
-            old_pattern: "old".to_string(),
-            path: PathBuf::from("tests/assets/classic.txt"),
-            omit: None,
-            verbose: false,
-        };
+        let old_pattern = "old".to_string();
+        let path = PathBuf::from("tests/assets/classic.txt");
 
-        assert!(search_in_file(&args).is_ok());
+        assert!(search_in_file(&path, &old_pattern).is_ok());
     }
 
     #[test]
     fn test_search_in_folder() {
-        let args = Cli {
-            old_pattern: "old".to_string(),
-            path: PathBuf::from("tests/assets"),
-            omit: None,
-            verbose: false,
-        };
+        let old_pattern = "old".to_string();
+        let path = PathBuf::from("tests/assets");
 
-        assert!(search_in_folder(&args).is_ok());
+        assert!(search_in_folder(&path, &None, &old_pattern).is_ok());
     }
 
     #[test]

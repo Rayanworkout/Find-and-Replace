@@ -28,7 +28,7 @@ pub struct Cli {
     // The new pattern to replace the old with
     // new_pattern: String,
     /// The path of the folder / file to read
-    pub path: PathBuf,
+    pub path: Option<PathBuf>,
 
     /// File or directory to exclude
     #[clap(long, short, alias = "exclude, ignore, skip", value_delimiter = ',')]
@@ -48,13 +48,13 @@ mod tests {
     fn test_args_are_parsed() {
         let cli = Cli {
             old_pattern: "old".to_string(),
-            path: PathBuf::from("path"),
+            path: Some(PathBuf::from("path")),
             omit: Some(vec![PathBuf::from("omit")]),
             verbose: false,
         };
 
         assert_eq!(cli.old_pattern, "old");
-        assert_eq!(cli.path, PathBuf::from("path"));
+        assert_eq!(cli.path, Some(PathBuf::from("path")));
         assert_eq!(cli.omit, Some(vec![PathBuf::from("omit")]));
         assert_eq!(cli.verbose, false);
     }
