@@ -20,8 +20,8 @@ fn main() -> Result<()> {
 
     match path.is_directory() {
         Some(result) => match result {
-            true => walk_folders(&path, &args.omit, &args.pattern)?,
-            false => search_in_file(&path, &args.pattern)?,
+            true => walk_folders(&path, &args.omit, &args.pattern, args.ignore_case)?,
+            false => search_in_file(&path, &args.pattern, args.ignore_case)?,
         },
         None => eprintln!("Failed to read the following path: {:?}", args.path),
     }

@@ -37,6 +37,10 @@ pub struct Cli {
     /// Display informations about the file being read, the files that cannot be read ...
     #[clap(long, short)]
     pub verbose: bool,
+
+    /// Match case when searching for content
+    #[clap(long, short)]
+    pub ignore_case: bool,
 }
 
 #[cfg(test)]
@@ -51,6 +55,7 @@ mod tests {
             path: Some(PathBuf::from("path")),
             omit: Some(vec![PathBuf::from("omit")]),
             verbose: false,
+            ignore_case: false,
         };
 
         assert_eq!(cli.pattern, "old");
