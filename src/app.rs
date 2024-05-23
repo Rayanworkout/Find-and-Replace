@@ -1,6 +1,8 @@
 use clap::Parser;
 use std::path::PathBuf;
 
+use crate::console::Console;
+
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Debug, Parser)]
 #[command(
@@ -81,16 +83,25 @@ pub struct Options {
     ignored_file_types: Vec<String>,
 }
 
-
-
-
 pub fn run() {
     let args = Options::parse();
-    println!("{:?}", args);
+
+    // Desctructure the Options struct
+    // So we can use the variables directly
+    let Options {
+        pattern,
+        path,
+        hidden,
+        omit,
+        verbose,
+        ignore_case,
+        selected_file_types,
+        ignored_file_types,
+    } = args;
+
+    let console = Console::new(verbose);
+
 }
-
-
-
 
 #[cfg(test)]
 mod tests {
