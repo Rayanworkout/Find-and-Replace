@@ -1,7 +1,9 @@
 use clap::Parser;
 use std::path::PathBuf;
 
-use crate::console::Console;
+use crate::{console::Console, Settings, Walker};
+
+
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Debug, Parser)]
@@ -83,6 +85,7 @@ pub struct Options {
     ignored_file_types: Vec<String>,
 }
 
+#[allow(unused_variables)]
 pub fn run() {
     let args = Options::parse();
 
@@ -98,8 +101,25 @@ pub fn run() {
         selected_file_types,
         ignored_file_types,
     } = args;
-
+    
     let console = Console::new(verbose);
+
+    let settings = Settings {
+        verbosity: verbose,
+        omit_pattern: omit,
+        search_hidden: hidden,
+        ignore_case,
+        selected_file_types,
+        ignored_file_types,
+    };
+
+    // If no path is provided, use the current directory
+    let path = path.unwrap_or_else(|| PathBuf::from("."));
+
+    let walker = Walker::new(pattern, path, settings, console);
+
+    walker.run();
+
 
 }
 
