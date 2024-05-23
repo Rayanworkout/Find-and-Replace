@@ -35,10 +35,17 @@ impl Searcher {
             let line = match line {
                 Ok(line) => line,
                 Err(e) => {
+                    let path_str = match path.to_str() {
+                        Some(path_str) => path_str,
+                        None => {
+                            return Err(anyhow::anyhow!("Could not convert path to string"));
+                        }
+                    };
+                    
                     if settings.verbose {
-                        console.print_error(e.to_string().as_str());
+                        console.print_error(e.to_string().as_str(), &path_str);
                     }
-                    continue;
+                    break;
                 }
             };
 

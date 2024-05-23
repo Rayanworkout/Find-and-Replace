@@ -16,8 +16,8 @@ impl Console {
 
     /// Print an error message to the console
     /// (using stderr)
-    pub fn print_error(&self, error: &str) {
-        eprintln!("An error occured: {error}");
+    pub fn print_error(&self, error: &str, filename: &str) {
+        eprintln!("\nAn error occured when reading \"{}\" => {}", filename, error);
     }
 
     pub fn print_filename(&self, filename: &str) {
