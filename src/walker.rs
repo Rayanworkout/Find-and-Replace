@@ -1,5 +1,5 @@
-use crate::{Console, Settings};
-use anyhow::Result;
+use crate::{Console, Searcher, Settings};
+use anyhow::{Context, Result};
 use ignore::{types::TypesBuilder, WalkBuilder};
 use std::path::PathBuf;
 
@@ -13,7 +13,6 @@ pub struct Walker {
 
 impl Walker {
     pub fn new(pattern: String, path: PathBuf, settings: Settings, console: Console) -> Self {
-        // Self.build_walker();
         Self {
             pattern,
             path,
@@ -23,7 +22,7 @@ impl Walker {
     }
 
     /// https://docs.rs/ignore/latest/ignore/types/struct.TypesBuilder.html
-    pub fn build_walker(&self) -> Result<ignore::Walk> {
+    fn build_walker(&self) -> Result<ignore::Walk> {
         let mut types_builder = TypesBuilder::new();
         types_builder.add_defaults();
 
@@ -55,7 +54,7 @@ impl Walker {
         }
 
         let types_matcher = types_builder.build()?;
-        
+
         let mut walk_builder = WalkBuilder::new(&self.path);
 
         walk_builder.types(types_matcher);
@@ -67,8 +66,49 @@ impl Walker {
 
         Ok(walk_builder.build())
     }
-    
-    pub fn run(&self) {
-        self.console.print_message("Running the walker");
+
+    pub fn run(&self) -> Result<()> {
+        let walker = self.build_walker()?;
+        let searcher = Searcher::new();
+
+        for entry in walker {
+            let entry = entry.with_context(|| "Could not read directory entry")?;
+
+            let mut finalename_printed = false;
+
+            if let Some(file_type) = entry.file_type() {
+                if file_type.is_file() {
+                    let matches = searcher.lookup(
+                        &entry.path().to_path_buf(),
+                        &self.pattern,
+                        &self.settings,
+                        &self.console,
+                    )?;
+
+                    if !matches.is_empty() {
+                        for (line_number, line) in &matches {
+                            if finalename_printed {
+                                self.console.print_match(
+                                    true,
+                                    &entry.path().to_string_lossy(),
+                                    line_number,
+                                    line,
+                                );
+                            } else {
+                                self.console.print_match(
+                                    false,
+                                    &entry.path().to_string_lossy(),
+                                    line_number,
+                                    line,
+                                );
+                            }
+
+                            finalename_printed = true;
+                        }
+                    }
+                }
+            }
+        }
+        Ok(())
     }
 }

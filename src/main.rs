@@ -1,4 +1,5 @@
+use anyhow::Result;
 
-fn main() {
-    fnr::run();
+fn main() -> Result<()> {
+    fnr::run()
 }

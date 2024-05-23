@@ -10,13 +10,17 @@ impl Console {
 
     /// Print a message to the console
     /// (using stdout)
-    pub fn print_message(&self, message: &str) {
-        println!("{message}");
+    pub fn print_match(&self, with_name: bool, filename: &str, line_number: &usize, line: &str) {
+        if with_name {
+            println!("{filename}:{line_number}: {line}");
+        } else {
+            println!("{line_number}: {line}");
+        }
     }
 
     /// Print an error message to the console
     /// (using stderr)
     pub fn print_error(&self, error: &str) {
-        eprintln!("{error}");
+        eprintln!("An error occured: {error}");
     }
 }
