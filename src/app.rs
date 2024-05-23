@@ -13,7 +13,7 @@ use crate::{console::Console, Settings, Walker};
 Examples:
     Find a pattern 'old' in files of the current folder
     
-    $ fnr olde
+    $ fnr old
 
     For any lookup, you can activate verbose mode
 
@@ -50,29 +50,28 @@ Examples:
 "
 )]
 pub struct Options {
-    /// The pattern to search for
+    /// The pattern to search for.
     pub pattern: String,
 
-    /// The path of the folder / file to read
-    /// Default is the current directory
+    /// The path of the folder / file to read.
+    /// Default is the current directory.
     pub path: Option<PathBuf>,
 
-    #[arg(long, help = "Include hidden files in the search")]
+    #[arg(long, help = "Include hidden files in the search.")]
     hidden: bool,
 
-    /// File or directory(ies) to exclude
+    /// File or directory(ies) to exclude.
     #[clap(long, short, alias = "exclude, ignore, skip", num_args= 0..,)]
     pub omit: Vec<PathBuf>,
 
     #[clap(
         long,
         short,
-        help = "Print additional information about files searched or errors"
+        help = "Print additional information about files searched or errors."
     )]
     pub verbose: bool,
 
-    /// Match case when searching for content
-    #[clap(long, short)]
+    #[clap(long, short, help = "Perform a case-insensitive search. Default is case-sensitive.")]
     pub ignore_case: bool,
 
     #[arg(

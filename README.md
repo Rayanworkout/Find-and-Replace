@@ -1,10 +1,10 @@
-## Find and Replace
+# Find and Replace
 
-A simple Rust CLI tool to efficiently search a text pattern inside your folders and replace it. (currently support search only).
+Search & Replace some patterns within your files with the speed and robustness of Rust (currently supports search only).
 
-### Installation (Linux)
+## Installation (Linux)
 
-_You need to have `Rust` and `Cargo` installed on your machine to run this tool. Official installation steps [here](https://www.rust-lang.org/tools/install)_
+_You need to have `Rust` and `Cargo` installed on your machine to run this tool. Official installation steps [here.](https://www.rust-lang.org/tools/install)_
 
 ```bash
 git clone https://github.com/Rayanworkout/Find-and-Replace.git
@@ -15,17 +15,19 @@ sudo mv target/release/fnr /usr/local/bin
 
 ```
 
-You can now call the tool from anywhere in your terminal.
+You can now call the binary from anywhere in your terminal.
 
-### Usage
+## Usage
 
 ```bash
 fnr <pattern> [path] [options]
 ```
 
-Binaries and non UTF-8 files are skipped.
+⚠️ Binaries and non UTF-8 files are skipped.
 
-### Some examples
+## Some examples
+
+Full option list below.
 
 Find a pattern 'old' in files of the current folder.
 If no path is provided, the tool will search in the current folder.
@@ -47,7 +49,8 @@ $ fnr old --ignore-case // or -i
 ```
 
 Find a pattern 'old' in files of the current folder, excluding the 'Desktop' folder.
-**Note that the path should be an absolute path, otherwise it won't be taken into account.**
+
+**Note that ignored path(s) should be absolute path(s), otherwise it won't be taken into account.**
 
 ```bash
 $ fnr old --omit ~/Desktop // or -o ~/Desktop
@@ -109,3 +112,20 @@ At any moment, feel free to hit
 $ fnr --help
 ```
 to get a list of all available options.
+
+Full list:
+
+```bash
+--hidden
+Include hidden files in the search.
+-o, --omit [<OMIT>...]
+File or directory(ies) to exclude.
+-v, --verbose
+Print additional information about files searched or errors.
+-i, --ignore-case
+Match case when searching for content.
+-t, --type [<SELECTED_FILE_TYPES>...]
+Only search files matching <file_type> or glob pattern.
+-T, --type-not [<IGNORED_FILE_TYPES>...]
+Ignore files matching <file_type> or glob pattern.
+```
