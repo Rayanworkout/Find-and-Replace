@@ -15,6 +15,9 @@ impl Searcher {
         Self {}
     }
 
+    /// Method to search for a pattern in a specific file
+    /// It builds a list of matches and prints them to the console
+    /// If verbose is true, we also print errors to the console
     pub fn lookup(
         &self,
         path: &path::PathBuf,
@@ -32,7 +35,9 @@ impl Searcher {
             let line = match line {
                 Ok(line) => line,
                 Err(e) => {
-                    console.print_error(e.to_string().as_str());
+                    if settings.verbose {
+                        console.print_error(e.to_string().as_str());
+                    }
                     continue;
                 }
             };
@@ -46,10 +51,6 @@ impl Searcher {
             if line.contains(&pattern_to_check) {
                 matches.push((index + 1, line));
             }
-        }
-
-        for (line_number, line) in &matches {
-            println!("{}: {}", line_number, line);
         }
 
         Ok(matches)

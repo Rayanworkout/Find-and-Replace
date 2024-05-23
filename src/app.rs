@@ -104,7 +104,7 @@ pub fn run() -> Result<()> {
     let console = Console::new(verbose);
 
     let settings = Settings {
-        verbosity: verbose,
+        verbose,
         omit_pattern: omit,
         search_hidden: hidden,
         ignore_case,

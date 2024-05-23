@@ -73,8 +73,7 @@ impl Walker {
 
         for entry in walker {
             let entry = entry.with_context(|| "Could not read directory entry")?;
-
-            let mut finalename_printed = false;
+            let filename = entry.path().to_string_lossy();
 
             if let Some(file_type) = entry.file_type() {
                 if file_type.is_file() {
@@ -86,24 +85,9 @@ impl Walker {
                     )?;
 
                     if !matches.is_empty() {
+                        self.console.print_filename(&filename);
                         for (line_number, line) in &matches {
-                            if finalename_printed {
-                                self.console.print_match(
-                                    true,
-                                    &entry.path().to_string_lossy(),
-                                    line_number,
-                                    line,
-                                );
-                            } else {
-                                self.console.print_match(
-                                    false,
-                                    &entry.path().to_string_lossy(),
-                                    line_number,
-                                    line,
-                                );
-                            }
-
-                            finalename_printed = true;
+                            self.console.print_match(line_number, line);
                         }
                     }
                 }
