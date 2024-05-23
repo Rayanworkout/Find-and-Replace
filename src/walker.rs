@@ -73,6 +73,13 @@ impl Walker {
 
         for entry in walker {
             let entry = entry.with_context(|| "Could not read directory entry")?;
+
+            // Check if path is not in the omit list with any
+            if self.settings.omit_pattern.iter().any(|omit| entry.path().starts_with(omit)) {
+                continue;
+            }
+            
+
             let filename = entry.path().to_string_lossy();
 
             if let Some(file_type) = entry.file_type() {
