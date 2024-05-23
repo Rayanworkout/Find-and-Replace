@@ -63,5 +63,3 @@ impl Searcher {
         Ok(matches)
     }
 }
-
-// fusil

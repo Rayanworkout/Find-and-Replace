@@ -13,7 +13,15 @@ use crate::{console::Console, Settings, Walker};
 Examples:
     Find a pattern 'old' in files of the current folder
     
-    $ fnr old
+    $ fnr olde
+
+    For any lookup, you can activate verbose mode
+
+    $ fnr old --verbose // or -v
+
+    You can also choose to perform a case-insensitive search
+
+    $ fnr old --ignore-case // or -i
 
     Find a pattern 'old' in files of the current folder, excluding the 'target' folder
 
@@ -23,22 +31,22 @@ Examples:
 
     $ fnr old . --omit target/ build/
 
-    Including hidden files
+    Including hidden files in your search
 
     $ fnr old . --hidden --omit target/ build/
 
-    Only search for files with a specific extension
+    Only search for files with a specific extension (use glob patterns)
 
-    $ fnr old . --type .rs
+    $ fnr old . --type *rs // or -t *rs
 
     Ignore files with a specific extension
 
-    $ fnr old . --type-not .rs
+    $ fnr old . --type-not *rs // or -T *rs
 
     You can also search / ignore multiple file types
     Here, we search for files with .rs and .toml extension, but ignore .txt and .md files
 
-    $ fnr old . --type .rs .toml --type-not .txt .md
+    $ fnr old . --type *rs *toml --type-not *txt *md
 "
 )]
 pub struct Options {
@@ -157,7 +165,7 @@ mod tests {
     #[test]
     fn test_file_types() {
         let mut cmd = Command::cargo_bin("fnr").unwrap();
-        cmd.args(&["old", ".", "-t", "rs", "-T", "json"])
+        cmd.args(&["old", ".", "-t", "*rs", "-T", "*json"])
             .assert()
             .success();
     }
