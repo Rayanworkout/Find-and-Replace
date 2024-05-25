@@ -38,7 +38,7 @@ impl Searcher {
                     let path_str = match path.to_str() {
                         Some(path_str) => path_str,
                         None => {
-                            return Err(anyhow::anyhow!("Could not convert path to string"));
+                            return Err(anyhow::anyhow!("Could not convert path to string."));
                         }
                     };
                     

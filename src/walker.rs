@@ -1,24 +1,28 @@
-use crate::{Console, Searcher, Settings};
+use crate::{Console, Replacer, Searcher, Settings};
 use anyhow::{Context, Result};
 use colored::Colorize;
 use ignore::{types::TypesBuilder, WalkBuilder};
 use std::path::PathBuf;
 
-#[allow(dead_code)]
 pub struct Walker {
-    pattern: String,
+    old_pattern: String,
+    new_pattern: String,
     path: PathBuf,
     settings: Settings,
-    console: Console,
 }
 
 impl Walker {
-    pub fn new(pattern: String, path: PathBuf, settings: Settings, console: Console) -> Self {
+    pub fn new(
+        old_pattern: String,
+        new_pattern: String,
+        path: PathBuf,
+        settings: Settings,
+    ) -> Self {
         Self {
-            pattern,
+            old_pattern,
+            new_pattern,
             path,
             settings,
-            console,
         }
     }
 
@@ -69,8 +73,10 @@ impl Walker {
     }
 
     pub fn run(&self) -> Result<()> {
+        let console = Console::new();
         let walker = self.build_walker()?;
         let searcher = Searcher::new();
+        let replacer = Replacer::new(console.clone(), self.settings.clone());
 
         let mut total_matches = 0;
         for entry in walker {
@@ -87,27 +93,23 @@ impl Walker {
                 continue;
             }
 
-            let filename = entry.path().to_string_lossy();
-
             if let Some(file_type) = entry.file_type() {
                 if file_type.is_file() {
-                    let matches = searcher.lookup(
-                        &entry.path().to_path_buf(),
-                        &self.pattern,
-                        &self.settings,
-                        &self.console,
-                    )?;
+                    let file_path = entry.path().to_path_buf();
+                    let matches =
+                        searcher.lookup(&file_path, &self.old_pattern, &self.settings, &console)?;
 
                     if !matches.is_empty() {
-                        self.console.print_filename(&filename);
+                        let filename = entry.path().to_string_lossy();
+                        console.print_filename(&filename);
+
                         for (line_number, line) in &matches {
-                            let parts: Vec<&str> = line.split(&self.pattern).collect();
-                            let colored_pattern = &self.pattern.red().to_string();
+                            // let parts: Vec<&str> = line.split(&self.pattern).collect();
+                            // let colored_pattern = &self.pattern.red().to_string();
 
-                            let colored_content = parts.join(&colored_pattern);
+                            // let colored_content = parts.join(&colored_pattern);
 
-                            self.console
-                                .print_match(&line_number.to_string().bold(), &colored_content);
+                            replacer.replace(&line, &self.new_pattern, &file_path, *line_number)?;
 
                             // Increment total matches
                             total_matches += 1;
@@ -118,9 +120,18 @@ impl Walker {
         }
 
         if total_matches > 0 {
-            println!("\n{}", format!("{} matches found.", total_matches).bold());
+            println!(
+                "\n{}",
+                format!("{} matches found.", total_matches.to_string().bold(),)
+            );
         } else if self.settings.verbose && total_matches == 0 {
-            println!("{}", "No matches found.".red());
+            println!(
+                "{}",
+                format!(
+                    "No matches found for \"{}\".",
+                    self.old_pattern.red().to_string().bold()
+                )
+            );
         }
         Ok(())
     }

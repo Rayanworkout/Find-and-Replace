@@ -50,12 +50,18 @@ Examples:
 "
 )]
 pub struct Options {
-    /// The pattern to search for.
+    #[arg(help = "The pattern to search for.", required = true)]
     pub pattern: String,
+
+    #[arg(help = "The new pattern to replace the old pattern.", required = true)]
+    pub new_pattern: String,
 
     /// The path of the folder / file to read.
     /// Default is the current directory.
     pub path: Option<PathBuf>,
+
+    #[arg(long, help = "Write changes to disk.")]
+    write: bool,
 
     #[arg(long, help = "Include hidden files in the search.")]
     hidden: bool,
@@ -71,7 +77,11 @@ pub struct Options {
     )]
     pub verbose: bool,
 
-    #[clap(long, short, help = "Perform a case-insensitive search. Default is case-sensitive.")]
+    #[clap(
+        long,
+        short,
+        help = "Perform a case-insensitive search. Default is case-sensitive."
+    )]
     pub ignore_case: bool,
 
     #[arg(
@@ -99,6 +109,7 @@ pub fn run() -> Result<()> {
     // So we can use the variables directly
     let Options {
         pattern,
+        new_pattern,
         path,
         hidden,
         omit,
@@ -106,6 +117,7 @@ pub fn run() -> Result<()> {
         ignore_case,
         selected_file_types,
         ignored_file_types,
+        write,
     } = args;
 
     let console = Console::new();
@@ -117,12 +129,13 @@ pub fn run() -> Result<()> {
         ignore_case,
         selected_file_types,
         ignored_file_types,
+        write,
     };
 
     // If no path is provided, use the current directory
     let path = path.unwrap_or_else(|| PathBuf::from("."));
 
-    let walker = Walker::new(pattern, path, settings, console);
+    let walker = Walker::new(pattern, new_pattern, path, settings);
 
     walker.run()
 }

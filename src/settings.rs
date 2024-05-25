@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 /// Settings applied for a DirectoryPatcher run
 pub struct Settings {
     /// Control verbosity of console's output
@@ -15,4 +15,7 @@ pub struct Settings {
     pub selected_file_types: Vec<String>,
     /// List of file types to ignore (default: empty)
     pub ignored_file_types: Vec<String>,
+    /// If true, changes are written to disk
+    /// (default: false)
+    pub write: bool,
 }

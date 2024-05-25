@@ -1,5 +1,6 @@
 use colored::{ColoredString, Colorize};
 
+#[derive(Clone)]
 pub struct Console {}
 
 impl Console {
@@ -25,5 +26,16 @@ impl Console {
 
     pub fn print_filename(&self, filename: &str) {
         println!("\n{}", filename.bold());
+    }
+
+    pub fn print_changes(&self, old_line: &str, new_line: &str, filename: &str) {
+        println!(
+            "\n{}\n{} {}\n{} {}",
+            filename.bold(),
+            "--".red(),
+            old_line,
+            "++".green(),
+            new_line
+        );
     }
 }
