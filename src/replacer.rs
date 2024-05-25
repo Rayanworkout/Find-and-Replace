@@ -22,8 +22,10 @@ impl Replacer {
         &self,
         old_line: &str,
         new_pattern: &str,
+        old_pattern: &str,
         file_path: &PathBuf,
         line_number: usize,
+        filename: &str,
     ) -> Result<()> {
         let mut file = File::open(file_path)
             .with_context(|| format!("Could not open {}", file_path.display()))?;
@@ -50,7 +52,7 @@ impl Replacer {
         } else {
             _ = &self
                 .console
-                .print_changes(old_line, &new_content, file_path.to_str().unwrap());
+                .print_changes(old_line, &filename, &old_pattern);
         }
 
         Ok(())

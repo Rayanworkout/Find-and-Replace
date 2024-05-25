@@ -101,15 +101,16 @@ impl Walker {
 
                     if !matches.is_empty() {
                         let filename = entry.path().to_string_lossy();
-                        console.print_filename(&filename);
 
                         for (line_number, line) in &matches {
-                            // let parts: Vec<&str> = line.split(&self.pattern).collect();
-                            // let colored_pattern = &self.pattern.red().to_string();
-
-                            // let colored_content = parts.join(&colored_pattern);
-
-                            replacer.replace(&line, &self.new_pattern, &file_path, *line_number)?;
+                            replacer.replace(
+                                &line,
+                                &self.new_pattern,
+                                &self.old_pattern,
+                                &file_path,
+                                *line_number,
+                                &filename,
+                            )?;
 
                             // Increment total matches
                             total_matches += 1;
