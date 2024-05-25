@@ -1,5 +1,6 @@
 use crate::{Console, Searcher, Settings};
 use anyhow::{Context, Result};
+use colored::Colorize;
 use ignore::{types::TypesBuilder, WalkBuilder};
 use std::path::PathBuf;
 
@@ -75,10 +76,14 @@ impl Walker {
             let entry = entry.with_context(|| "Could not read directory entry")?;
 
             // Check if path is not in the omit list with any
-            if self.settings.omit_pattern.iter().any(|omit| entry.path().starts_with(omit)) {
+            if self
+                .settings
+                .omit_pattern
+                .iter()
+                .any(|omit| entry.path().starts_with(omit))
+            {
                 continue;
             }
-            
 
             let filename = entry.path().to_string_lossy();
 
@@ -94,7 +99,9 @@ impl Walker {
                     if !matches.is_empty() {
                         self.console.print_filename(&filename);
                         for (line_number, line) in &matches {
-                            self.console.print_match(line_number, line);
+                            let colored_pattern = line.replace(&self.pattern, &self.pattern.red());
+                            self.console
+                                .print_match(&line_number.to_string().bold(), &colored_pattern);
                         }
                     }
                 }

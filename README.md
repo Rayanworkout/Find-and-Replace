@@ -27,8 +27,6 @@ fnr <pattern> [path] [options]
 
 ## Some examples
 
-Full option list below.
-
 Find a pattern 'old' in files of the current folder.
 If no path is provided, the tool will search in the current folder.
     
@@ -98,7 +96,8 @@ Here, we search for files with .rs and .toml extension, but ignore .txt and .md 
 $ fnr old --type *rs *toml --type-not *txt *md
 ```
 
-As an example, the equivalent to the following command
+
+As an example, the equivalent to the following `find` command
 ```bash
 find ~/Desktop/ -type f -name "*txt" -exec cat {} \; | grep hello
 ```
@@ -113,7 +112,7 @@ $ fnr --help
 ```
 to get a list of all available options.
 
-Full list:
+All options:
 
 ```bash
 --hidden

@@ -108,7 +108,7 @@ pub fn run() -> Result<()> {
         ignored_file_types,
     } = args;
 
-    let console = Console::new(verbose);
+    let console = Console::new();
 
     let settings = Settings {
         verbose,
