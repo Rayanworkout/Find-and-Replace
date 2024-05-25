@@ -28,11 +28,11 @@ impl Console {
         println!("\n{}", filename.bold());
     }
 
-    pub fn print_changes(&self, old_line: &str, filename: &str, pattern: &str) {
+    pub fn print_changes(&self, old_line: &str, filename: &str, pattern: &str, new_pattern: &str) {
         let parts: Vec<&str> = old_line.split(pattern).collect();
 
         let red_pattern = pattern.red().to_string();
-        let green_pattern = pattern.green().to_string();
+        let green_pattern = new_pattern.green().to_string();
 
         let red_old_content = parts.join(&red_pattern);
         let green_new_content = parts.join(&green_pattern);

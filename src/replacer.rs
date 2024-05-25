@@ -52,7 +52,7 @@ impl Replacer {
         } else {
             _ = &self
                 .console
-                .print_changes(old_line, &filename, &old_pattern);
+                .print_changes(old_line, &filename, &old_pattern, &new_pattern);
         }
 
         Ok(())
