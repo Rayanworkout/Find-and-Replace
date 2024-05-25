@@ -99,9 +99,14 @@ impl Walker {
                     if !matches.is_empty() {
                         self.console.print_filename(&filename);
                         for (line_number, line) in &matches {
-                            let colored_pattern = line.replace(&self.pattern, &self.pattern.red());
+
+                            let parts: Vec<&str> = line.split(&self.pattern).collect();
+                            let colored_pattern = &self.pattern.red().to_string();
+
+                            let colored_content = parts.join(&colored_pattern);
+
                             self.console
-                                .print_match(&line_number.to_string().bold(), &colored_pattern);
+                                .print_match(&line_number.to_string().bold(), &colored_content);
                         }
                     }
                 }
