@@ -72,8 +72,10 @@ impl Walker {
         let walker = self.build_walker()?;
         let searcher = Searcher::new();
 
+        let mut total_matches = 0;
         for entry in walker {
-            let entry = entry.with_context(|| "Could not read directory entry")?;
+            let entry = entry
+                .with_context(|| "Could not read directory entry. Maybe try with sudo ?".red())?;
 
             // Check if path is not in the omit list with any
             if self
@@ -99,7 +101,6 @@ impl Walker {
                     if !matches.is_empty() {
                         self.console.print_filename(&filename);
                         for (line_number, line) in &matches {
-
                             let parts: Vec<&str> = line.split(&self.pattern).collect();
                             let colored_pattern = &self.pattern.red().to_string();
 
@@ -107,10 +108,19 @@ impl Walker {
 
                             self.console
                                 .print_match(&line_number.to_string().bold(), &colored_content);
+
+                            // Increment total matches
+                            total_matches += 1;
                         }
                     }
                 }
             }
+        }
+
+        if total_matches > 0 {
+            println!("\n{}", format!("{} matches found.", total_matches).bold());
+        } else if self.settings.verbose && total_matches == 0 {
+            println!("{}", "No matches found.".red());
         }
         Ok(())
     }
