@@ -41,11 +41,13 @@ impl Searcher {
                             return Err(anyhow::anyhow!("Could not convert path to string."));
                         }
                     };
-                    
+
                     if settings.verbose {
                         console.print_error(e.to_string().as_str(), &path_str);
                     }
-                    break;
+
+                    // If the file is not utf-8 encoded, we early return an empty vector
+                    return Ok(Vec::new());
                 }
             };
 

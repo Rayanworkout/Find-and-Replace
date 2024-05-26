@@ -17,23 +17,6 @@ sudo mv target/release/fnr /usr/local/bin
 
 You can now call the binary from anywhere in your terminal.
 
-## Usage
-
-```bash
-fnr [OPTIONS] <PATTERN> <NEW_PATTERN> [PATH]
-
-# or if you prefer
-
-fnr <PATTERN> <NEW_PATTERN> [PATH] [OPTIONS]
-
-```
-
-⚠️ Binaries and non UTF-8 files are skipped.
-
-If no path is provided, the tool will search in the current folder.
-
-All options have a short version, exluding `--write` and `--hidden` flags.
-
 
 ## Some examples
 
@@ -128,6 +111,26 @@ At any moment, feel free to hit
 fnr --help
 ```
 to get a list of all available options.
+
+
+
+## Usage
+
+```bash
+fnr [OPTIONS] <PATTERN> <NEW_PATTERN> [PATH]
+
+# or if you prefer
+
+fnr <PATTERN> <NEW_PATTERN> [PATH] [OPTIONS]
+
+```
+
+⚠️ Binaries and non UTF-8 files are skipped.
+
+If no path is provided, the tool will search in the current folder.
+
+All options have a short version, excluding `--write` and `--hidden` flags.
+
 
 All options:
 

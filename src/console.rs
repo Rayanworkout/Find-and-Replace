@@ -13,7 +13,7 @@ impl Console {
     /// (using stderr)
     pub fn print_error(&self, error: &str, filename: &str) {
         eprintln!(
-            "\nAn error occured when reading \"{}\" => {}",
+            "\nAn error occured when reading \"{}\" => {}.",
             filename.bold(),
             error.red()
         );
