@@ -1,4 +1,5 @@
-use colored::{ColoredString, Colorize};
+use colored::Colorize;
+use crate::enums::Operation;
 
 #[derive(Clone)]
 pub struct Console {}
@@ -6,12 +7,6 @@ pub struct Console {}
 impl Console {
     pub fn new() -> Self {
         Self {}
-    }
-
-    /// Print a message to the console
-    /// (using stdout)
-    pub fn print_match(&self, line_number: &ColoredString, line: &str) {
-        println!("{}: {}", line_number, line);
     }
 
     /// Print an error message to the console
@@ -22,10 +17,6 @@ impl Console {
             filename.bold(),
             error.red()
         );
-    }
-
-    pub fn print_filename(&self, filename: &str) {
-        println!("\n{}", filename.bold());
     }
 
     pub fn print_changes(&self, old_line: &str, filename: &str, pattern: &str, new_pattern: &str) {
@@ -45,5 +36,29 @@ impl Console {
             "++".green(),
             green_new_content
         );
+    }
+
+    pub fn warn_bare_written(&self) {
+        println!(
+            "{}",
+            "\nYou used the --write flag but no match was found.
+        Be careful as this command would write changes to disk without confirmation.
+        Do not use --write when looking for content to replace."
+                .red()
+        );
+    }
+
+    pub fn print_match_counts(&self, matches_count: u32, operation: Operation) {
+        let plural = if matches_count > 1 { "es" } else { "" };
+        let count = matches_count.to_string().green().bold();
+
+        match operation {
+            Operation::Match => {
+                println!("\n{}", format!("{} match{} found.", count, plural));
+            }
+            Operation::Replacement => {
+                println!("\n{}", format!("{} match{} replaced.", count, plural));
+            }
+        }
     }
 }

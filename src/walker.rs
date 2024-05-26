@@ -1,3 +1,4 @@
+use crate::enums::Operation;
 use crate::{Console, Replacer, Searcher, Settings};
 use anyhow::{Context, Result};
 use colored::Colorize;
@@ -120,39 +121,16 @@ impl Walker {
             }
         }
 
-        let plural = if total_matches > 1 { "es" } else { "" };
         if !self.settings.write {
             if total_matches > 0 {
-                println!(
-                    "\n{}",
-                    format!(
-                        "{} match{} found.",
-                        total_matches.to_string().bold(),
-                        plural
-                    )
-                );
-            } else if total_matches == 0 {
-                println!(
-                    "{}",
-                    format!(
-                        "\nNo match found for \"{}\".",
-                        self.old_pattern.red().to_string().bold()
-                    )
-                );
+                console.print_match_counts(total_matches, Operation::Match);
             }
         } else {
             if total_matches == 0 {
-                println!("{}", "\nYou used the --write flag but no match was found.\nBe careful as this command would write changes to disk without confirmation.\nDo not use --write when looking for content to replace.".red());
+                console.warn_bare_written();
             }
 
-            println!(
-                "\n{}",
-                format!(
-                    "{} match{} replaced.",
-                    total_matches.to_string().bold().green(),
-                    plural
-                )
-            );
+            console.print_match_counts(total_matches, Operation::Replacement);
         }
         Ok(())
     }
