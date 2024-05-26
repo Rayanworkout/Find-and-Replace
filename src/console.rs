@@ -1,5 +1,5 @@
-use colored::Colorize;
 use crate::enums::Operation;
+use colored::Colorize;
 
 #[derive(Clone)]
 pub struct Console {}
@@ -38,6 +38,7 @@ impl Console {
         );
     }
 
+    /// Warn the user in case he used the --write flag but no match was found
     pub fn warn_bare_written(&self) {
         println!(
             "{}",
@@ -48,13 +49,18 @@ impl Console {
         );
     }
 
+    /// Print the number of matches or replacements found
     pub fn print_match_counts(&self, matches_count: u32, operation: Operation) {
         let plural = if matches_count > 1 { "es" } else { "" };
         let count = matches_count.to_string().green().bold();
 
         match operation {
             Operation::Match => {
-                println!("\n{}", format!("{} match{} found.", count, plural));
+                if matches_count > 0 {
+                    println!("\n{}", format!("{} match{} found.\nRe-run the command with --write to write changes to disk.", count, plural));
+                } else {
+                    println!("\n{}", "No match found.".red());
+                }
             }
             Operation::Replacement => {
                 println!("\n{}", format!("{} match{} replaced.", count, plural));

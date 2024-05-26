@@ -122,9 +122,7 @@ impl Walker {
         }
 
         if !self.settings.write {
-            if total_matches > 0 {
-                console.print_match_counts(total_matches, Operation::Match);
-            }
+            console.print_match_counts(total_matches, Operation::Match);
         } else {
             if total_matches == 0 {
                 console.warn_bare_written();
