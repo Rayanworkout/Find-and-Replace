@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Parser;
 use std::path::PathBuf;
 
-use crate::{console::Console, Settings, Walker};
+use crate::{Settings, Walker};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Debug, Parser)]
@@ -101,7 +101,6 @@ pub struct Options {
     ignored_file_types: Vec<String>,
 }
 
-#[allow(unused_variables)]
 pub fn run() -> Result<()> {
     let args = Options::parse();
 
@@ -119,8 +118,6 @@ pub fn run() -> Result<()> {
         ignored_file_types,
         write,
     } = args;
-
-    let console = Console::new();
 
     let settings = Settings {
         verbose,

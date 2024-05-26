@@ -123,13 +123,13 @@ impl Walker {
         if total_matches > 0 {
             println!(
                 "\n{}",
-                format!("{} matches found.", total_matches.to_string().bold(),)
+                format!("{} match(es) found.", total_matches.to_string().bold(),)
             );
-        } else if self.settings.verbose && total_matches == 0 {
+        } else if total_matches == 0 {
             println!(
                 "{}",
                 format!(
-                    "No matches found for \"{}\".",
+                    "\nNo match found for \"{}\".",
                     self.old_pattern.red().to_string().bold()
                 )
             );

@@ -31,29 +31,26 @@ impl Replacer {
             .with_context(|| format!("Could not open {}", file_path.display()))?;
 
         let mut contents = String::new();
+
         file.read_to_string(&mut contents)?;
 
         let mut lines: Vec<&str> = contents.split('\n').collect();
 
-        let new_content = contents.replace(old_line, new_pattern);
+        let new_line = lines[line_number - 1].replace(old_pattern, new_pattern);
 
         if self.settings.write {
-            // Check if the line exists and perform the replacement
-            if line_number <= lines.len() && lines[line_number - 1] == old_line {
-                // Replace the line
-                lines[line_number - 1] = &new_content;
-            }
+            lines[line_number - 1] = &new_line;
 
             let new_contents = lines.join("\n");
 
             // Write the modified content back to the file
-            let mut writer = BufWriter::new(File::create(file_path)?);
+            let mut writer = BufWriter::new(File::create(&file_path)?);
+
             writer.write_all(new_contents.as_bytes())?;
-        } else {
-            _ = &self
-                .console
-                .print_changes(old_line, &filename, &old_pattern, &new_pattern);
         }
+        _ = &self
+            .console
+            .print_changes(old_line, &filename, &old_pattern, &new_pattern);
 
         Ok(())
     }
