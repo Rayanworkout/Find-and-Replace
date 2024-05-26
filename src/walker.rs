@@ -120,17 +120,37 @@ impl Walker {
             }
         }
 
-        if total_matches > 0 {
+        let plural = if total_matches > 1 { "es" } else { "" };
+        if !self.settings.write {
+            if total_matches > 0 {
+                println!(
+                    "\n{}",
+                    format!(
+                        "{} match{} found.",
+                        total_matches.to_string().bold(),
+                        plural
+                    )
+                );
+            } else if total_matches == 0 {
+                println!(
+                    "{}",
+                    format!(
+                        "\nNo match found for \"{}\".",
+                        self.old_pattern.red().to_string().bold()
+                    )
+                );
+            }
+        } else {
+            if total_matches == 0 {
+                println!("{}", "\nYou used --write flag but no match was found.\nBe careful as this command would write changes to disk without confirmation.\nDo not use --write when looking for content to replace.".red());
+            }
+
             println!(
                 "\n{}",
-                format!("{} match(es) found.", total_matches.to_string().bold(),)
-            );
-        } else if total_matches == 0 {
-            println!(
-                "{}",
                 format!(
-                    "\nNo match found for \"{}\".",
-                    self.old_pattern.red().to_string().bold()
+                    "{} match{} replaced.",
+                    total_matches.to_string().bold().green(),
+                    plural
                 )
             );
         }
