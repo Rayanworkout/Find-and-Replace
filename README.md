@@ -32,6 +32,8 @@ fnr <PATTERN> <NEW_PATTERN> [PATH] [OPTIONS]
 
 If no path is provided, the tool will search in the current folder.
 
+All options have a short version, exluding `--write` and `--hidden` flags.
+
 
 ## Some examples
 
@@ -48,16 +50,17 @@ fnr old new --write
 ```
 
 For any lookup or replacement, you can activate verbose mode.
-Note the use of "_" to indicate that we only want to perform a lookup.
+
+**Note the use of "_" to indicate that we only want to perform a lookup.**
 
 ```bash
-fnr old _ --verbose // or -v
+fnr old _ --verbose
 ```
 
-You can also perform a case-insensitive replacement.
+You can also perform a case-insensitive search / replacement.
 
 ```bash
-fnr old new --ignore-case // or -i
+fnr old new --ignore-case  # or -i
 ```
 
 Find a pattern 'old' in files of the current folder, excluding the 'Desktop' folder and replace it with 'new'.
@@ -65,7 +68,7 @@ Find a pattern 'old' in files of the current folder, excluding the 'Desktop' fol
 **Note that ignored path(s) should be absolute path(s), otherwise it won't be taken into account.**
 
 ```bash
-fnr old new --omit ~/Desktop // or -o ~/Desktop
+fnr old new --omit ~/Desktop  # or -o ~/Desktop
 ```
 
 You can also omit multiple folders.
@@ -83,7 +86,7 @@ fnr old new --hidden --omit ~/Desktop/ ~/Desktop/foo
 Only search for files with a specific extension (use glob patterns) inside the home directory.
 
 ```bash
-fnr old _ ~ --type *rs // or -t *rs
+fnr old _ ~ --type *rs  # or -t *rs
 ```
 
 You can also check for a specific pattern using one or 2 wildcards.
@@ -100,7 +103,7 @@ fnr old_pattern new_pattern ~/Desktop/ -t "d*e.txt"
 Ignore files with a specific extension.
 
 ```bash
-fnr old new --type-not *rs // or -T *rs
+fnr old new --type-not *rs  # or -T *rs
 ```
 
 You can also search / ignore multiple file types or patterns.
