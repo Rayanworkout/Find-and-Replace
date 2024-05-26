@@ -142,7 +142,7 @@ impl Walker {
             }
         } else {
             if total_matches == 0 {
-                println!("{}", "\nYou used --write flag but no match was found.\nBe careful as this command would write changes to disk without confirmation.\nDo not use --write when looking for content to replace.".red());
+                println!("{}", "\nYou used the --write flag but no match was found.\nBe careful as this command would write changes to disk without confirmation.\nDo not use --write when looking for content to replace.".red());
             }
 
             println!(
