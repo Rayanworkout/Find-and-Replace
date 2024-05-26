@@ -30,23 +30,22 @@ impl Replacer {
         let mut file = File::open(file_path)
             .with_context(|| format!("Could not open {}", file_path.display()))?;
 
-        let mut contents = String::new();
+        let mut file_content = String::new();
 
-        file.read_to_string(&mut contents)?;
+        file.read_to_string(&mut file_content)?;
 
-        let mut lines: Vec<&str> = contents.split('\n').collect();
-
-        let new_line = lines[line_number - 1].replace(old_pattern, new_pattern);
+        let mut lines: Vec<&str> = file_content.split('\n').collect();
 
         if self.settings.write {
-            lines[line_number - 1] = &new_line;
+            let updated_line = lines[line_number - 1].replace(old_pattern, new_pattern);
+            lines[line_number - 1] = &updated_line;
 
-            let new_contents = lines.join("\n");
+            let updated_content = lines.join("\n");
 
             // Write the modified content back to the file
             let mut writer = BufWriter::new(File::create(&file_path)?);
 
-            writer.write_all(new_contents.as_bytes())?;
+            writer.write_all(updated_content.as_bytes())?;
         }
         _ = &self
             .console
