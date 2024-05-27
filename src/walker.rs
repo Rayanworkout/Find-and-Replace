@@ -104,6 +104,7 @@ impl Walker {
                         let filename = entry.path().to_string_lossy();
 
                         for (line_number, line) in &matches {
+
                             replacer.replace(
                                 &line,
                                 &self.new_pattern,

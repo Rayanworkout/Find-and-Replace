@@ -37,7 +37,7 @@ For any lookup or replacement, you can activate verbose mode.
 **Note the use of "_" to indicate that we only want to perform a lookup.**
 
 ```bash
-fnr hello _ --verbose
+fnr hello _ --verbose # or -v
 ```
 
 You can also perform a case-insensitive search / replacement.

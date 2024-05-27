@@ -27,16 +27,16 @@ impl Replacer {
         line_number: usize,
         filename: &str,
     ) -> Result<()> {
-        let mut file = File::open(file_path)
-            .with_context(|| format!("Could not open {}", file_path.display()))?;
-
-        let mut file_content = String::new();
-
-        file.read_to_string(&mut file_content)?;
-
-        let mut lines: Vec<&str> = file_content.split('\n').collect();
-
         if self.settings.write {
+            let mut file = File::open(file_path)
+                .with_context(|| format!("Could not open {}", file_path.display()))?;
+
+            let mut file_content = String::new();
+
+            file.read_to_string(&mut file_content)?;
+
+            let mut lines: Vec<&str> = file_content.split('\n').collect();
+
             let updated_line = lines[line_number - 1].replace(old_pattern, new_pattern);
             lines[line_number - 1] = &updated_line;
 
@@ -47,6 +47,7 @@ impl Replacer {
 
             writer.write_all(updated_content.as_bytes())?;
         }
+        
         _ = &self
             .console
             .print_changes(old_line, &filename, &old_pattern, &new_pattern);

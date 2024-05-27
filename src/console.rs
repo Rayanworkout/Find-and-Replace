@@ -25,6 +25,8 @@ impl Console {
         let red_pattern = pattern.red().to_string();
         let green_pattern = new_pattern.green().to_string();
 
+        
+
         let red_old_content = parts.join(&red_pattern);
         let green_new_content = parts.join(&green_pattern);
 

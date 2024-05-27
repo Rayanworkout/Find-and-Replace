@@ -33,7 +33,13 @@ impl Searcher {
 
         for (index, line) in reader.lines().enumerate() {
             let line = match line {
-                Ok(line) => line,
+                Ok(line) => {
+                    if settings.ignore_case {
+                        line.to_lowercase()
+                    } else {
+                        line
+                    }
+                }
                 Err(e) => {
                     let path_str = match path.to_str() {
                         Some(path_str) => path_str,
@@ -51,13 +57,7 @@ impl Searcher {
                 }
             };
 
-            let pattern_to_check = if settings.ignore_case {
-                pattern.to_lowercase()
-            } else {
-                pattern.to_string()
-            };
-
-            if line.contains(&pattern_to_check) {
+            if line.contains(&pattern) {
                 matches.push((index + 1, line));
             }
         }

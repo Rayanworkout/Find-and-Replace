@@ -132,9 +132,12 @@ pub fn run() -> Result<()> {
     // If no path is provided, use the current directory
     let path = path.unwrap_or_else(|| PathBuf::from("."));
 
+    let pattern = match ignore_case {
+        true => pattern.to_lowercase(),
+        false => pattern,
+    };
+
     let walker = Walker::new(pattern, new_pattern, path, settings);
 
     walker.run()
 }
-
-
