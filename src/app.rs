@@ -137,45 +137,4 @@ pub fn run() -> Result<()> {
     walker.run()
 }
 
-#[cfg(test)]
-mod tests {
 
-    // use super::*;
-    use assert_cmd::Command;
-
-    #[test]
-    fn test_no_arguments() {
-        let mut cmd = Command::cargo_bin("fnr").unwrap();
-        cmd.assert().failure();
-    }
-
-    #[test]
-    fn test_basic_search() {
-        let mut cmd = Command::cargo_bin("fnr").unwrap();
-        cmd.arg("old").assert().success();
-    }
-
-    #[test]
-    fn test_omit() {
-        let mut cmd = Command::cargo_bin("fnr").unwrap();
-        cmd.args(&["old", ".", "--omit", "target"])
-            .assert()
-            .success();
-    }
-
-    #[test]
-    fn test_hidden_verbose() {
-        let mut cmd = Command::cargo_bin("fnr").unwrap();
-        cmd.args(&["old", ".", "--hidden", "--verbose"])
-            .assert()
-            .success();
-    }
-
-    #[test]
-    fn test_file_types() {
-        let mut cmd = Command::cargo_bin("fnr").unwrap();
-        cmd.args(&["old", ".", "-t", "*rs", "-T", "*json"])
-            .assert()
-            .success();
-    }
-}

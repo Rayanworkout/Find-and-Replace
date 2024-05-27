@@ -20,16 +20,16 @@ You can now call the binary from anywhere in your terminal.
 
 ## Some examples
 
-Find a pattern 'old' in files of the current folder without replacing it.
+Find a pattern 'hello' in files of the current folder without replacing it.
     
 ```bash
-fnr old new
+fnr hello new
 ```
 
-Find a pattern 'old' in files of the current folder and replace it with 'new'.
+Find a pattern 'hello' in files of the current folder and replace it with 'new'.
 
 ```bash
-fnr old new --write
+fnr hello new --write
 ```
 
 For any lookup or replacement, you can activate verbose mode.
@@ -37,39 +37,39 @@ For any lookup or replacement, you can activate verbose mode.
 **Note the use of "_" to indicate that we only want to perform a lookup.**
 
 ```bash
-fnr old _ --verbose
+fnr hello _ --verbose
 ```
 
 You can also perform a case-insensitive search / replacement.
 
 ```bash
-fnr old new --ignore-case  # or -i
+fnr hello new --ignore-case  # or -i
 ```
 
-Find a pattern 'old' in files of the current folder, excluding the 'Desktop' folder and replace it with 'new'.
+Find a pattern 'hello' in files of the current folder, excluding the 'Desktop' folder and replace it with 'new'.
 
 **Note that ignored path(s) should be absolute path(s), otherwise it won't be taken into account.**
 
 ```bash
-fnr old new --omit ~/Desktop  # or -o ~/Desktop
+fnr hello new --omit ~/Desktop  # or -o ~/Desktop
 ```
 
 You can also omit multiple folders.
 
 ```bash
-fnr old new --omit ~/Desktop/ ~/Desktop/foo
+fnr hello new --omit ~/Desktop/ ~/Desktop/foo
 ```
 
 Including hidden files in your search.
 
 ```bash
-fnr old new --hidden --omit ~/Desktop/ ~/Desktop/foo
+fnr hello new --hidden --omit ~/Desktop/ ~/Desktop/foo
 ```
 
 Only search for files with a specific extension (use glob patterns) inside the home directory.
 
 ```bash
-fnr old _ ~ --type *rs  # or -t *rs
+fnr hello _ ~ --type *rs  # or -t *rs
 ```
 
 You can also check for a specific pattern using one or 2 wildcards.
@@ -86,7 +86,7 @@ fnr old_pattern new_pattern ~/Desktop/ -t "d*e.txt"
 Ignore files with a specific extension.
 
 ```bash
-fnr old new --type-not *rs  # or -T *rs
+fnr hello new --type-not *rs  # or -T *rs
 ```
 
 You can also search / ignore multiple file types or patterns.

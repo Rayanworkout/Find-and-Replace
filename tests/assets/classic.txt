@@ -1,0 +1,6 @@
+hey
+I appear here
+a classic file with some content
+old
+and here
+hello world
