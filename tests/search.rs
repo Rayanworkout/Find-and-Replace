@@ -168,4 +168,52 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn test_basic_search_with_omit() -> Result<()> {
+        let mut cmd = Command::cargo_bin("fnr")?;
+        let output = cmd
+            .arg("find")
+            .arg("new")
+            .arg("tests/assets/")
+            // Adding the --omit flag
+            .arg("--omit")
+            .arg("tests/assets/omit_me")
+            .output()
+            .expect("Failed to execute command");
+
+        let stdout = str::from_utf8(&output.stdout)?;
+        let stderr = str::from_utf8(&output.stderr)?;
+
+        assert!(output.status.success());
+
+        assert_eq!(stdout, "\nNo match found.\n");
+        assert_eq!(stderr, "");
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_basic_search_filtering_files() -> Result<()> {
+        let mut cmd = Command::cargo_bin("fnr")?;
+        let output = cmd
+            .arg("classic")
+            .arg("new")
+            .arg("tests/assets/")
+            // Adding the --type flag
+            .arg("--type")
+            .arg("*py")
+            .output()
+            .expect("Failed to execute command");
+
+        let stdout = str::from_utf8(&output.stdout)?;
+        let stderr = str::from_utf8(&output.stderr)?;
+
+        assert!(output.status.success());
+
+        assert_eq!(stdout, "\ntests/assets/some_python.py\n-- print(\"classic !\")\n++ print(\"new !\")\n\n1 match found.\nRe-run the command with --write to write changes to disk.\n");
+        assert_eq!(stderr, "");
+
+        Ok(())
+    }
 }
