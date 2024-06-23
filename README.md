@@ -26,7 +26,7 @@ Find a pattern 'hello' in files of the current folder without replacing it.
 fnr hello new
 ```
 
-Find a pattern 'hello' in files of the current folder and replace it with 'new'.
+Find a pattern 'hello' in files of the current folder (recursively) and replace it with 'new'.
 
 ```bash
 fnr hello new --write
@@ -46,9 +46,10 @@ You can also perform a case-insensitive search / replacement.
 fnr hello new --ignore-case  # or -i
 ```
 
-Find a pattern 'hello' in files of the current folder, excluding the 'Desktop' folder and replace it with 'new'.
 
 **Note that ignored path(s) should be absolute path(s), otherwise it won't be taken into account.**
+
+Find a pattern 'hello' in files of the current folder, excluding the 'Desktop' folder and replace it with 'new'.
 
 ```bash
 fnr hello new --omit ~/Desktop  # or -o ~/Desktop
@@ -57,7 +58,7 @@ fnr hello new --omit ~/Desktop  # or -o ~/Desktop
 You can also omit multiple folders.
 
 ```bash
-fnr hello new --omit ~/Desktop/ ~/Desktop/foo
+fnr hello new --omit ~/Desktop/ ~/Another/
 ```
 
 Including hidden files in your search.
@@ -103,7 +104,7 @@ find ~/Desktop/ -type f -name "*txt" -exec cat {} \; | grep hello
 ```
 would be
 ```bash
-fnr _ hello ~/Desktop/ -t *txt
+fnr hello _ ~/Desktop/ -t *txt
 ```
 
 At any moment, feel free to hit 
