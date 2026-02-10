@@ -33,13 +33,9 @@ impl Replacer {
             file.read_to_string(&mut file_content)?;
 
             let mut lines: Vec<&str> = file_content.split('\n').collect();
-            println!("Before");
-            println!("{}", lines[line_number - 1]);
 
             let updated_line = lines[line_number - 1].replace(old_pattern, new_pattern);
             lines[line_number - 1] = &updated_line;
-            println!("After");
-            println!("{}", lines[line_number - 1]);
 
             let updated_content = lines.join("\n");
 
