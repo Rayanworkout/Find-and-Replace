@@ -104,7 +104,7 @@ pub struct Options {
 pub fn run() -> Result<()> {
     let args = Options::parse();
 
-    // Desctructure the Options struct
+    // Destructure the Options struct
     // So we can use the variables directly
     let Options {
         pattern,
