@@ -77,14 +77,14 @@ impl Walker {
         let console = Console::new();
         let walker = self.build_walker()?;
         let searcher = Searcher::new();
-        let replacer = Replacer::new(console.clone(), self.settings.clone());
+        let replacer = Replacer::new(self.settings.clone());
 
         let mut total_matches = 0;
         for entry in walker {
             let entry = entry
                 .with_context(|| "Could not read directory entry. Maybe try with sudo ?".red())?;
 
-            // Check if path is not in the omit list with any
+            // Check if path is not in the omit list with any()
             if self
                 .settings
                 .omit_pattern
@@ -104,35 +104,31 @@ impl Walker {
                         continue;
                     }
 
+                    // We increment total_matches with the matches of this file
+                    total_matches += matches.len();
+
                     let filename = entry.path().to_string_lossy();
 
-                    // If the query is a lookup, no need to actually call
-                    // the replacer
-                    if !self.settings.write {
-                        for (_line_number, line) in &matches {
+                    for (line_number, line) in &matches {
+                        // If the query is a lookup, no need to actually call
+                        // the replacer
+                        if !self.settings.write {
                             _ = console.print_changes(
                                 line,
                                 &filename,
                                 &self.old_pattern,
                                 &self.new_pattern,
                             );
-                        }
-                        return Ok(());
-                    }
 
-                    for (line_number, line) in &matches {
+                            continue;
+                        }
                         replacer.replace(
-                            &line,
                             &self.new_pattern,
                             &self.old_pattern,
                             &file_path,
                             *line_number,
-                            &filename,
                         )?;
                     }
-
-                    // Increment total matches
-                    total_matches += 1;
                 }
             }
         }

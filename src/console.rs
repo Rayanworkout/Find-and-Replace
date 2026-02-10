@@ -50,7 +50,7 @@ Do not use --write when looking for content to replace."
     }
 
     /// Print the number of matches or replacements found
-    pub fn print_match_counts(&self, matches_count: u32, operation: Operation) {
+    pub fn print_match_counts(&self, matches_count: usize, operation: Operation) {
         let plural = if matches_count > 1 { "es" } else { "" };
         let count = matches_count.to_string().green().bold();
 

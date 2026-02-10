@@ -40,6 +40,7 @@ impl Searcher {
                         line
                     }
                 }
+                
                 Err(e) => {
                     let path_str = match path.to_str() {
                         Some(path_str) => path_str,

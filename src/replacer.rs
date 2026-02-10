@@ -5,27 +5,24 @@ use std::{
     path::PathBuf,
 };
 
-use crate::{Console, Settings};
+use crate::Settings;
 
 pub struct Replacer {
-    console: Console,
     settings: Settings,
 }
 
 impl Replacer {
-    pub fn new(console: Console, settings: Settings) -> Self {
-        Self { console, settings }
+    pub fn new(settings: Settings) -> Self {
+        Self { settings }
     }
 
     /// Function to open the file and then replace the old line with the new pattern
     pub fn replace(
         &self,
-        old_line: &str,
         new_pattern: &str,
         old_pattern: &str,
         file_path: &PathBuf,
         line_number: usize,
-        filename: &str,
     ) -> Result<()> {
         if self.settings.write {
             let mut file = File::open(file_path)
@@ -36,9 +33,13 @@ impl Replacer {
             file.read_to_string(&mut file_content)?;
 
             let mut lines: Vec<&str> = file_content.split('\n').collect();
+            println!("Before");
+            println!("{}", lines[line_number - 1]);
 
             let updated_line = lines[line_number - 1].replace(old_pattern, new_pattern);
             lines[line_number - 1] = &updated_line;
+            println!("After");
+            println!("{}", lines[line_number - 1]);
 
             let updated_content = lines.join("\n");
 
@@ -47,10 +48,6 @@ impl Replacer {
 
             writer.write_all(updated_content.as_bytes())?;
         }
-        
-        _ = &self
-            .console
-            .print_changes(old_line, &filename, &old_pattern, &new_pattern);
 
         Ok(())
     }
