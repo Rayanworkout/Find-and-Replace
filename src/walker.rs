@@ -100,24 +100,39 @@ impl Walker {
                     let matches =
                         searcher.lookup(&file_path, &self.old_pattern, &self.settings, &console)?;
 
-                    if !matches.is_empty() {
-                        let filename = entry.path().to_string_lossy();
-
-                        for (line_number, line) in &matches {
-
-                            replacer.replace(
-                                &line,
-                                &self.new_pattern,
-                                &self.old_pattern,
-                                &file_path,
-                                *line_number,
-                                &filename,
-                            )?;
-
-                            // Increment total matches
-                            total_matches += 1;
-                        }
+                    if matches.is_empty() {
+                        continue;
                     }
+
+                    let filename = entry.path().to_string_lossy();
+
+                    // If the query is a lookup, no need to actually call
+                    // the replacer
+                    if !self.settings.write {
+                        for (_line_number, line) in &matches {
+                            _ = console.print_changes(
+                                line,
+                                &filename,
+                                &self.old_pattern,
+                                &self.new_pattern,
+                            );
+                        }
+                        return Ok(());
+                    }
+
+                    for (line_number, line) in &matches {
+                        replacer.replace(
+                            &line,
+                            &self.new_pattern,
+                            &self.old_pattern,
+                            &file_path,
+                            *line_number,
+                            &filename,
+                        )?;
+                    }
+
+                    // Increment total matches
+                    total_matches += 1;
                 }
             }
         }

@@ -16,8 +16,8 @@ impl Searcher {
     }
 
     /// Method to search for a pattern in a specific file
-    /// It builds a list of matches and prints them to the console
-    /// If verbose is true, we also print errors to the console
+    /// It builds and returns a list of matches
+    /// If verbose is true, we print errors to the console
     pub fn lookup(
         &self,
         path: &path::PathBuf,
