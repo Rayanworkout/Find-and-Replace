@@ -59,13 +59,9 @@ pub struct Options {
         help = "The new pattern to replace the old pattern.",
         required_unless_present = "lookup",
         conflicts_with = "lookup",
-        value_name = "NEW_PATTERN",
+        value_name = "NEW_PATTERN"
     )]
     pub new_pattern: Option<String>,
-
-    /// The path of the folder / file to read.
-    /// Default is the current directory.
-    pub path: Option<PathBuf>,
 
     #[arg(long, help = "Write changes to disk.")]
     write: bool,
@@ -74,29 +70,22 @@ pub struct Options {
     hidden: bool,
 
     /// File or directory(ies) to exclude.
-    #[clap(long, short, alias = "exclude, ignore, skip", num_args= 0..,)]
+    #[arg(long, short, alias = "exclude, ignore, skip", num_args= 0..,)]
     pub omit: Vec<PathBuf>,
 
-    #[clap(
+    #[arg(
         long,
         short,
         help = "Print additional information about files searched or errors."
     )]
     pub verbose: bool,
 
-    #[clap(
+    #[arg(
         long,
         short,
         help = "Perform a case-insensitive search. Default is case-sensitive."
     )]
     pub ignore_case: bool,
-
-    #[clap(
-        long,
-        short,
-        help = "Only perform a lookup instead of replacement, defaults to false."
-    )]
-    pub lookup: bool,
 
     #[arg(
         short = 't',
@@ -113,6 +102,26 @@ pub struct Options {
         num_args = 0..,
     )]
     ignored_file_types: Vec<String>,
+
+    // NEW FLAGS IN v.0.2.0
+    #[arg(
+        long,
+        short,
+        help = "Only perform a lookup instead of replacement, defaults to false."
+    )]
+    pub lookup: bool,
+
+    #[arg(
+        short,
+        long,
+        help = "Select the replacement(s) you wish to write on disk",
+        num_args= 0..,
+    )]
+    select: Option<Vec<usize>>,
+
+    /// The path of the folder / file to read.
+    /// Default is the current directory.
+    pub path: Option<PathBuf>,
 }
 
 pub fn run() -> Result<()> {
@@ -132,6 +141,7 @@ pub fn run() -> Result<()> {
         selected_file_types,
         ignored_file_types,
         write,
+        select,
     } = args;
 
     let settings = Settings {
@@ -143,11 +153,13 @@ pub fn run() -> Result<()> {
         selected_file_types,
         ignored_file_types,
         write,
+        select,
     };
 
     // If no path is provided, use the current directory
     let path = path.unwrap_or_else(|| PathBuf::from("."));
 
+    // Shadowing
     let pattern = match ignore_case {
         true => pattern.to_lowercase(),
         false => pattern,

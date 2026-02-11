@@ -19,7 +19,11 @@ pub struct Settings {
     /// (default: false)
     pub write: bool,
 
+    // NEW FLAGS IN v.0.2.0
     /// If true, perform only a lookup, no replacement involved.
     /// (default: false)
     pub lookup: bool,
+
+    /// If provided, select the replacement(s) you wish to write on disk
+    pub select: Option<Vec<usize>>,
 }

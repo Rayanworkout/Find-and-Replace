@@ -136,6 +136,8 @@ impl Walker {
 
         let mut total_matches = 0;
         let mut total_lines_walked: i32 = 0;
+        // We keep track of matches found for indexes
+        let mut match_index = 0;
 
         for entry in walker {
             let entry = entry.with_context(|| {
@@ -162,6 +164,7 @@ impl Walker {
                     let filename = entry.path().to_string_lossy();
 
                     for (line_number, line) in &matches {
+                        match_index += 1;
                         // If the query is a lookup, we print the lookup
                         // without the changes
                         if self.settings.lookup {
@@ -170,6 +173,7 @@ impl Walker {
                                 &filename,
                                 &self.old_pattern,
                                 &line_number,
+                                match_index,
                             );
 
                             continue;
@@ -183,6 +187,7 @@ impl Walker {
                                 &self.old_pattern,
                                 &self.new_pattern,
                                 &line_number,
+                                match_index,
                             );
 
                             continue;
