@@ -47,6 +47,8 @@ Examples:
     Here, we search for files with .rs and .toml extension, but ignore .txt and .md files
 
     $ fnr old . --type *rs *toml --type-not *txt *md
+
+    If a .fnrignore file exists in the search tree, matching paths are skipped automatically
 "
 )]
 pub struct Options {

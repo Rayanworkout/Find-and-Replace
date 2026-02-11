@@ -62,16 +62,21 @@ impl Walker {
         let types_matcher = types_builder.build()?;
 
         let mut walk_builder = WalkBuilder::new(&self.path);
-        walk_builder.add_custom_ignore_filename(".fnrignore");
-
+        
         walk_builder.types(types_matcher);
-
+        
         // If settings.search_hidden is true, we set ignore to false
         if self.settings.search_hidden {
             walk_builder.hidden(false);
         }
-
         
+        
+        // If the custom .fnrignore file exists, we use it
+        walk_builder.add_custom_ignore_filename(".fnrignore");
+
+        // By default the walker used .gitignore if present in the folder
+        // and ignore mentionned patterns.
+        // We don't want that.
         walk_builder.git_ignore(false);
         walk_builder.git_global(false);
         walk_builder.git_exclude(false);
@@ -89,6 +94,9 @@ impl Walker {
 
         let mut total_matches = 0;
         let mut total_lines_walked: i32 = 0;
+
+        // If the new pattern is "_", no replacement
+        
 
         for entry in walker {
             let entry = entry

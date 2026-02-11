@@ -33,6 +33,7 @@ fnr <PATTERN> <NEW_PATTERN> [PATH] [OPTIONS]
 - Use `_` as a placeholder for `<NEW_PATTERN>` when you only want lookup output.
 - `--write` applies replacements to files on disk.
 - Without `--write`, `fnr` only previews matches and suggested replacements.
+- If present, `.fnrignore` files are respected during traversal (gitignore-style patterns).
 - Binaries and non-UTF-8 files are skipped.
 
 ## Examples
@@ -71,6 +72,21 @@ Omit multiple folders:
 
 ```bash
 fnr hello new --omit ~/Desktop/ ~/Another/
+```
+
+Use a `.fnrignore` file to skip paths automatically:
+
+```gitignore
+# .fnrignore
+target/
+node_modules/
+*.log
+```
+
+Then run normally (ignored entries are skipped):
+
+```bash
+fnr hello new .
 ```
 
 Include hidden files in the search:
