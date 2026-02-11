@@ -71,7 +71,7 @@ pub struct Options {
     )]
     pub new_pattern: Option<String>,
 
-    #[arg(long, help = "Write changes to disk.")]
+    #[arg(long, help = "Write changes to disk.", conflicts_with = "lookup",)]
     write: bool,
 
     #[arg(long, help = "Include hidden files in the search.")]
@@ -125,6 +125,7 @@ pub struct Options {
         help = "Select replacement(s) to write (syntax: N or A-B).",
         num_args= 1..,
         value_name = "N|A-B",
+        conflicts_with = "lookup",
     )]
     select: Option<Vec<String>>,
 

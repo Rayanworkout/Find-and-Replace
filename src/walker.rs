@@ -132,9 +132,10 @@ impl Walker {
         let console = Console::new();
         let walker = self.build_walker()?;
         let searcher = Searcher::new();
-        let replacer = Replacer::new(self.settings.clone());
+        let replacer = Replacer::new();
 
-        let mut total_matches = 0;
+        let mut total_found_matches = 0;
+        let mut total_replaced_matches = 0;
         let mut total_lines_walked: i32 = 0;
         // We keep track of matches found for indexes
         let mut match_index = 0;
@@ -158,8 +159,8 @@ impl Walker {
                         continue;
                     }
 
-                    // We increment total_matches with the matches of this file
-                    total_matches += matches.len();
+                    // Count all matches found in this file.
+                    total_found_matches += matches.len();
 
                     let filename = entry.path().to_string_lossy();
                     console.print_file_header(&filename);
@@ -180,6 +181,19 @@ impl Walker {
                         }
                         match self.settings.write {
                             true => {
+                                // We check if the user has selected specific replacements
+                                // If this match is not included, we continue the loop
+                                match &self.settings.select {
+                                    Some(select) if !select.contains(&match_index) => {
+                                        println!(
+                                            "  [{}] line {} - match not selected for replacement, skipping.",
+                                            match_index, line_number
+                                        );
+                                        continue;
+                                    }
+                                    _ => {}
+                                }
+
                                 // In write mode, apply the replacement to disk.
                                 replacer.replace(
                                     &self.new_pattern,
@@ -187,6 +201,7 @@ impl Walker {
                                     &file_path,
                                     *line_number,
                                 )?;
+                                total_replaced_matches += 1;
                             }
                             false => {
                                 // In dry-run mode, only print the proposed change.
@@ -205,15 +220,23 @@ impl Walker {
         }
 
         if self.settings.lookup {
-            console.print_matches_counts(total_matches, total_lines_walked, Operation::Lookup);
+            console.print_matches_counts(
+                total_found_matches,
+                total_lines_walked,
+                Operation::Lookup,
+            );
         } else if !self.settings.write {
-            console.print_matches_counts(total_matches, total_lines_walked, Operation::Match);
+            console.print_matches_counts(total_found_matches, total_lines_walked, Operation::Match);
         } else {
-            if total_matches == 0 {
+            if total_replaced_matches == 0 {
                 console.warn_bare_written();
             }
 
-            console.print_matches_counts(total_matches, total_lines_walked, Operation::Replacement);
+            console.print_matches_counts(
+                total_replaced_matches,
+                total_lines_walked,
+                Operation::Replacement,
+            );
         }
         Ok(())
     }

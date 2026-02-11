@@ -5,15 +5,11 @@ use std::{
     path::PathBuf,
 };
 
-use crate::Settings;
-
-pub struct Replacer {
-    settings: Settings,
-}
+pub struct Replacer {}
 
 impl Replacer {
-    pub fn new(settings: Settings) -> Self {
-        Self { settings }
+    pub fn new() -> Self {
+        Self {}
     }
 
     /// Function to open the file and then replace the old line with the new pattern
