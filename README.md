@@ -36,6 +36,7 @@ fnr [OPTIONS] <PATTERN> --lookup [PATH]
 - Replacement mode expects both `<PATTERN>` and `<NEW_PATTERN>`.
 - Lookup mode can be used with `--lookup` and no `<NEW_PATTERN>`.
 - `--write` applies replacements to files on disk.
+- `--select` can target specific replacements when used with `--write`.
 - Without `--write`, `fnr` only previews matches and suggested replacements.
 - If present, `.fnrignore` files are respected during traversal (gitignore-style patterns).
 - Binaries and non-UTF-8 files are skipped.
@@ -98,6 +99,18 @@ Include hidden files in the search:
 
 ```bash
 fnr hello new --hidden --omit ~/Desktop/ ~/Desktop/foo
+```
+
+Replace only selected occurrences by index:
+
+```bash
+fnr hello new . --write --select 1 2 3
+```
+
+Replace a range of occurrences:
+
+```bash
+fnr hello new . --write --select 1-3
 ```
 
 Search only files matching a glob pattern inside home:
@@ -163,6 +176,8 @@ fnr --help
           Perform a case-insensitive search. Default is case-sensitive.
   -l, --lookup
           Only perform a lookup instead of replacement.
+  -s, --select <N|A-B>...
+          Select replacement(s) to write (syntax: N or A-B).
   -t, --type [<SELECTED_FILE_TYPES>...]
           Only search files matching <file_type> or glob pattern.
   -T, --type-not [<IGNORED_FILE_TYPES>...]

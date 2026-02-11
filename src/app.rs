@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Parser;
 use std::path::PathBuf;
 
-use crate::{Settings, Walker};
+use crate::{parse_select, Settings, Walker};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Debug, Parser)]
@@ -47,6 +47,14 @@ Examples:
     Here, we search for files with .rs and .toml extension, but ignore .txt and .md files
 
     $ fnr old . --type *rs *toml --type-not *txt *md
+
+    When replacing with --write, select specific occurrences by index
+
+    $ fnr old new . --write --select 1 2 3
+
+    Select a range of occurrences
+
+    $ fnr old new . --write --select 1-3
 
     If a .fnrignore file exists in the search tree, matching paths are skipped automatically
 "
@@ -114,10 +122,11 @@ pub struct Options {
     #[arg(
         short,
         long,
-        help = "Select the replacement(s) you wish to write on disk",
-        num_args= 0..,
+        help = "Select replacement(s) to write (syntax: N or A-B).",
+        num_args= 1..,
+        value_name = "N|A-B",
     )]
-    select: Option<Vec<usize>>,
+    select: Option<Vec<String>>,
 
     /// The path of the folder / file to read.
     /// Default is the current directory.
@@ -141,8 +150,10 @@ pub fn run() -> Result<()> {
         selected_file_types,
         ignored_file_types,
         write,
-        select,
+        select: raw_select, // Assigning variable during destructuring
     } = args;
+
+    let select = parse_select(raw_select)?;
 
     let settings = Settings {
         verbose,

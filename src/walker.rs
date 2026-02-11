@@ -215,6 +215,7 @@ impl Walker {
 
             console.print_match_counts(total_matches, total_lines_walked, Operation::Replacement);
         }
+        println!("{:?}", &self.settings.select);
         Ok(())
     }
 }
