@@ -27,3 +27,4 @@ index into a slice/vec → needs to become usize
 pointer arithmetic / offsets → needs usize
 
 calling APIs that take sizes → typically usize
+walked

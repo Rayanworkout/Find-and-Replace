@@ -19,7 +19,14 @@ impl Console {
         );
     }
 
-    pub fn print_changes(&self, old_line: &str, filename: &str, pattern: &str, new_pattern: &str) {
+    pub fn print_changes(
+        &self,
+        old_line: &str,
+        filename: &str,
+        pattern: &str,
+        new_pattern: &str,
+        line_number: &usize,
+    ) {
         let parts: Vec<&str> = old_line.split(pattern).collect();
 
         let red_pattern = pattern.red().to_string();
@@ -29,8 +36,9 @@ impl Console {
         let green_new_content = parts.join(&green_pattern);
 
         println!(
-            "\n{}\n{} {}\n{} {}",
+            "\n{}\n(line {})\n{} {}\n{} {}",
             filename.bold(),
+            line_number,
             "--".red(),
             red_old_content,
             "++".green(),

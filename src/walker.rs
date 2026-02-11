@@ -118,6 +118,7 @@ impl Walker {
                                 &filename,
                                 &self.old_pattern,
                                 &self.new_pattern,
+                                &line_number
                             );
 
                             continue;
