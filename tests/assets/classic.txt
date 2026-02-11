@@ -4,3 +4,4 @@ a classic file with some content
 new
 and here
 hello world
+ability

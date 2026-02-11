@@ -3,7 +3,7 @@ use crate::{Console, Replacer, Searcher, Settings};
 use anyhow::{Context, Result};
 use colored::Colorize;
 use ignore::{types::TypesBuilder, WalkBuilder};
-use std::path::PathBuf;
+use std::path::{Component, Path, PathBuf};
 
 pub struct Walker {
     old_pattern: String,
@@ -26,6 +26,38 @@ impl Walker {
             path,
             settings,
         }
+    }
+
+    /// Returns true if `entry_path` should be skipped by `--omit`.
+    /// Supports exact/prefix paths (`tests/assets`) and component matches
+    /// (`assets/` anywhere in the walked path).
+    fn path_matches_omit(entry_path: &Path, omit_path: &Path) -> bool {
+        // Direct prefix match for explicit paths (e.g. tests/assets).
+        if entry_path.starts_with(omit_path) {
+            return true;
+        }
+
+        // Component-sequence match for generic omits (e.g. assets/).
+        let omit_components: Vec<Component<'_>> = omit_path
+            .components()
+            .filter(|c| !matches!(c, Component::CurDir))
+            .collect();
+        if omit_components.is_empty() {
+            return false;
+        }
+
+        let entry_components: Vec<Component<'_>> = entry_path
+            .components()
+            .filter(|c| !matches!(c, Component::CurDir))
+            .collect();
+
+        if omit_components.len() > entry_components.len() {
+            return false;
+        }
+
+        entry_components
+            .windows(omit_components.len())
+            .any(|window| window == omit_components.as_slice())
     }
 
     /// https://docs.rs/ignore/latest/ignore/types/struct.TypesBuilder.html
@@ -66,6 +98,17 @@ impl Walker {
 
         walk_builder.types(types_matcher);
 
+        // Apply CLI omit filters at walker level so omitted directories are
+        // not descended into.
+        let omit_patterns = self.settings.omit_pattern.clone();
+        if !omit_patterns.is_empty() {
+            walk_builder.filter_entry(move |entry| {
+                !omit_patterns
+                    .iter()
+                    .any(|omit| Walker::path_matches_omit(entry.path(), omit))
+            });
+        }
+
         // If settings.search_hidden is true, we set ignore to false
         if self.settings.search_hidden {
             walk_builder.hidden(false);
@@ -98,16 +141,6 @@ impl Walker {
             let entry = entry.with_context(|| {
                 "Could not read directory entry. Maybe try with elevated privileges ?".red()
             })?;
-
-            // Check if path is not in the omit list with any()
-            if self
-                .settings
-                .omit_pattern
-                .iter()
-                .any(|omit| entry.path().starts_with(omit))
-            {
-                continue;
-            }
 
             if let Some(file_type) = entry.file_type() {
                 if file_type.is_file() {
