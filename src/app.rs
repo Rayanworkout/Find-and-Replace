@@ -55,8 +55,13 @@ pub struct Options {
     #[arg(help = "The pattern to search for.", required = true)]
     pub pattern: String,
 
-    #[arg(help = "The new pattern to replace the old pattern.", required = true)]
-    pub new_pattern: String,
+    #[arg(
+        help = "The new pattern to replace the old pattern.",
+        required_unless_present = "lookup",
+        conflicts_with = "lookup",
+        value_name = "NEW_PATTERN",
+    )]
+    pub new_pattern: Option<String>,
 
     /// The path of the folder / file to read.
     /// Default is the current directory.

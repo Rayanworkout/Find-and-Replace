@@ -19,6 +19,19 @@ impl Console {
         );
     }
 
+    pub fn print_lookup(&self, old_line: &str, filename: &str, pattern: &str, line_number: &usize) {
+        let red_pattern = pattern.red().to_string();
+        let red_old_content = old_line.replace(pattern, &red_pattern);
+
+        println!(
+            "\n{}\n(line {})\n{} {}",
+            filename.bold(),
+            line_number,
+            "--".red(),
+            red_old_content
+        );
+    }
+
     pub fn print_changes(
         &self,
         old_line: &str,

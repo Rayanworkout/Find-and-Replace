@@ -15,10 +15,11 @@ pub struct Walker {
 impl Walker {
     pub fn new(
         old_pattern: String,
-        new_pattern: String,
+        new_pattern: Option<String>,
         path: PathBuf,
         settings: Settings,
     ) -> Self {
+        let new_pattern = new_pattern.unwrap_or_default(); // ignored in lookup mode anyway
         Self {
             old_pattern,
             new_pattern,
@@ -62,15 +63,14 @@ impl Walker {
         let types_matcher = types_builder.build()?;
 
         let mut walk_builder = WalkBuilder::new(&self.path);
-        
+
         walk_builder.types(types_matcher);
-        
+
         // If settings.search_hidden is true, we set ignore to false
         if self.settings.search_hidden {
             walk_builder.hidden(false);
         }
-        
-        
+
         // If the custom .fnrignore file exists, we use it
         walk_builder.add_custom_ignore_filename(".fnrignore");
 
@@ -81,7 +81,6 @@ impl Walker {
         walk_builder.git_global(false);
         walk_builder.git_exclude(false);
         walk_builder.ignore(false);
-
 
         Ok(walk_builder.build())
     }
@@ -96,18 +95,19 @@ impl Walker {
         let mut total_lines_walked: i32 = 0;
 
         for entry in walker {
-            let entry = entry
-                .with_context(|| "Could not read directory entry. Maybe try with sudo ?".red())?;
+            let entry = entry.with_context(|| {
+                "Could not read directory entry. Maybe try with elevated privileges ?".red()
+            })?;
 
             // Check if path is not in the omit list with any()
-            // if self
-            //     .settings
-            //     .omit_pattern
-            //     .iter()
-            //     .any(|omit| entry.path().starts_with(omit))
-            // {
-            //     continue;
-            // }
+            if self
+                .settings
+                .omit_pattern
+                .iter()
+                .any(|omit| entry.path().starts_with(omit))
+            {
+                continue;
+            }
 
             if let Some(file_type) = entry.file_type() {
                 if file_type.is_file() {
@@ -129,8 +129,20 @@ impl Walker {
                     let filename = entry.path().to_string_lossy();
 
                     for (line_number, line) in &matches {
-                        // If the query is a lookup, no need to actually call
-                        // the replacer
+                        // If the query is a lookup, we print the lookup
+                        // without the changes
+                        if self.settings.lookup {
+                            _ = console.print_lookup(
+                                line,
+                                &filename,
+                                &self.old_pattern,
+                                &line_number,
+                            );
+
+                            continue;
+                        }
+
+                        // If the query is a dry-run, no need to call the replacer
                         if !self.settings.write {
                             _ = console.print_changes(
                                 line,
@@ -142,6 +154,9 @@ impl Walker {
 
                             continue;
                         }
+
+                        // If the query is neither a lookup or a dry-run, we need
+                        // to call the replacer
                         replacer.replace(
                             &self.new_pattern,
                             &self.old_pattern,
