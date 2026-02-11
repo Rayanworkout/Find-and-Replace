@@ -43,7 +43,6 @@ impl Replacer {
             let mut writer = BufWriter::new(File::create(&file_path)?);
 
             writer.write_all(updated_content.as_bytes())?;
-            println!("Replaced !");
         }
 
         Ok(())
