@@ -44,7 +44,7 @@ Find a pattern `hello` in files of the current folder without writing changes:
 fnr hello new
 ```
 
-Find `hello` recursively and replace it with `new` on disk:
+Same lookup, but write changes to disk:
 
 ```bash
 fnr hello new --write
@@ -81,6 +81,7 @@ Use a `.fnrignore` file to skip paths automatically:
 target/
 node_modules/
 *.log
+*.py
 ```
 
 Then run normally (ignored entries are skipped):
