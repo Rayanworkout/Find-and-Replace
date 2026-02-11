@@ -34,7 +34,7 @@ fnr [OPTIONS] <PATTERN> --lookup [PATH]
 Complex query example (multiple filters + selective write):
 
 ```bash
-fnr "todo" "done" --ignore-case --hidden --omit target/ node_modules/ --type *rs *toml --type-not *md --select 1-3 -v --write
+fnr "todo" "done" --ignore-case --hidden --omit target/ node_modules/ --type *rs *toml --type-not *md -v --write
 ```
 
 What this does:
@@ -44,7 +44,6 @@ What this does:
 - Skips `target/` and `node_modules/` (`--omit ...`).
 - Searches only `*.rs` and `*.toml` files (`--type *rs *toml`).
 - Excludes markdown files (`--type-not *md`).
-- Applies only matches `1` to `3` (`--select 1-3`).
 - Prints extra diagnostics (`-v`) and writes changes to disk (`--write`).
 
 ## Quick Notes
@@ -54,12 +53,42 @@ What this does:
 - `--write` applies replacements to files on disk.
 - `--select` can target specific replacements when used with `--write`.
 - Without `--write`, `fnr` only previews matches and suggested replacements.
-- If present, `.fnrignore` files are respected during traversal (gitignore-style patterns).
+- If present, files and patterns mentionned in the `.fnrignore` are skipped during traversal (gitignore-style patterns).
 - Binaries and non-UTF-8 files are skipped.
 
-## Examples
+## Output example
 
-Find a pattern `hello` in files of the current folder without writing changes:
+```bash
+.\src\app.rs
+  [1] line 180
+      let walker = Walker::new(pattern, new_pattern, path, settings);
+  [2] line 182
+      walker.run()
+
+.\src\lib.rs
+  [3] line 8
+  mod walker;
+  [4] line 17
+  pub use walker::Walker;
+
+.\src\walker.rs
+  [5] line 64
+      fn build_walker(&self) -> Result<ignore::Walk> {
+  [6] line 120
+          // By default the walker used .gitignore if present in the folder
+  [7] line 133
+          let walker = self.build_walker()?;
+  [8] line 143
+          for entry in walker {
+
+8 matches found.
+1834 lines scanned.
+```
+
+
+## Query Examples
+
+Find a pattern `hello` in all files of the current folder and preview replacements with `new`:
 
 ```bash
 fnr hello new
@@ -68,13 +97,13 @@ fnr hello new
 Lookup only (no replacement):
 
 ```bash
-fnr hello --lookup
+fnr hello --lookup # or -l
 ```
 
 Enable verbose mode for lookup or replacement:
 
 ```bash
-fnr hello --lookup --verbose # or -v
+fnr hello --lookup --verbose # or -v -l
 ```
 
 Case-insensitive matching:
