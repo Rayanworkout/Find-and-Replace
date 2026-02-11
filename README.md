@@ -58,33 +58,7 @@ What this does:
 
 ## Output example
 
-```bash
-.\src\app.rs
-  [1] line 180
-      let walker = Walker::new(pattern, new_pattern, path, settings);
-  [2] line 182
-      walker.run()
-
-.\src\lib.rs
-  [3] line 8
-  mod walker;
-  [4] line 17
-  pub use walker::Walker;
-
-.\src\walker.rs
-  [5] line 64
-      fn build_walker(&self) -> Result<ignore::Walk> {
-  [6] line 120
-          // By default the walker used .gitignore if present in the folder
-  [7] line 133
-          let walker = self.build_walker()?;
-  [8] line 143
-          for entry in walker {
-
-8 matches found.
-1834 lines scanned.
-```
-
+![fnr output example](example_output.png)
 
 ## Query Examples
 
