@@ -58,20 +58,32 @@ Do not use --write when looking for content to replace."
     }
 
     /// Print the number of matches or replacements found
-    pub fn print_match_counts(&self, matches_count: usize, operation: Operation) {
-        let plural = if matches_count > 1 { "es" } else { "" };
+    pub fn print_match_counts(
+        &self,
+        matches_count: usize,
+        total_lines_walked: i32,
+        operation: Operation,
+    ) {
+        let matches_plural = if matches_count > 1 { "es" } else { "" };
+        let lines_walked_plural = if total_lines_walked > 1 { "s" } else { "" };
         let count = matches_count.to_string().green().bold();
 
         match operation {
             Operation::Match => {
                 if matches_count > 0 {
-                    println!("\n{}", format!("{} match{} found.\nRe-run the command with --write to write changes to disk.", count, plural));
+                    println!("\n{}", format!("{} match{} found.\n{} line{} audited.\nRe-run the command with --write to write changes to disk.", count, matches_plural, total_lines_walked, lines_walked_plural));
                 } else {
                     println!("\n{}", "No match found.".red());
                 }
             }
             Operation::Replacement => {
-                println!("\n{}", format!("{} match{} replaced.", count, plural));
+                println!(
+                    "\n{}",
+                    format!(
+                        "{} match{} replaced.\n{} line{} audited.",
+                        count, matches_plural, total_lines_walked, lines_walked_plural
+                    )
+                );
             }
         }
     }

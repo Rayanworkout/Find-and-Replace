@@ -24,12 +24,13 @@ impl Searcher {
         pattern: &str,
         settings: &Settings,
         console: &Console,
-    ) -> Result<Vec<(usize, String)>> {
+    ) -> Result<(Vec<(usize, String)>, i32)> {
         let file =
             File::open(path).with_context(|| format!("Could not open {}", path.display()))?;
         let reader = BufReader::new(file);
 
         let mut matches = Vec::new();
+        let mut walked_lines = 0;
 
         for (index, line) in reader.lines().enumerate() {
             let line = match line {
@@ -40,7 +41,7 @@ impl Searcher {
                         line
                     }
                 }
-                
+
                 Err(e) => {
                     let path_str = match path.to_str() {
                         Some(path_str) => path_str,
@@ -54,15 +55,16 @@ impl Searcher {
                     }
 
                     // If the file is not utf-8 encoded, we early return an empty vector
-                    return Ok(Vec::new());
+                    return Ok((Vec::new(), walked_lines));
                 }
             };
 
+            walked_lines += 1;
             if line.contains(&pattern) {
                 matches.push((index + 1, line));
             }
         }
 
-        Ok(matches)
+        Ok((matches, walked_lines))
     }
 }

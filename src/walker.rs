@@ -80,6 +80,8 @@ impl Walker {
         let replacer = Replacer::new(self.settings.clone());
 
         let mut total_matches = 0;
+        let mut total_lines_walked: i32 = 0;
+
         for entry in walker {
             let entry = entry
                 .with_context(|| "Could not read directory entry. Maybe try with sudo ?".red())?;
@@ -97,8 +99,12 @@ impl Walker {
             if let Some(file_type) = entry.file_type() {
                 if file_type.is_file() {
                     let file_path = entry.path().to_path_buf();
-                    let matches =
+                    let (matches, lines_walked) =
                         searcher.lookup(&file_path, &self.old_pattern, &self.settings, &console)?;
+
+                    // We increment the total lines walked now, because even without matches
+                    // we get the counter
+                    total_lines_walked += lines_walked;
 
                     if matches.is_empty() {
                         continue;
@@ -118,7 +124,7 @@ impl Walker {
                                 &filename,
                                 &self.old_pattern,
                                 &self.new_pattern,
-                                &line_number
+                                &line_number,
                             );
 
                             continue;
@@ -135,13 +141,13 @@ impl Walker {
         }
 
         if !self.settings.write {
-            console.print_match_counts(total_matches, Operation::Match);
+            console.print_match_counts(total_matches, total_lines_walked, Operation::Match);
         } else {
             if total_matches == 0 {
                 console.warn_bare_written();
             }
 
-            console.print_match_counts(total_matches, Operation::Replacement);
+            console.print_match_counts(total_matches, total_lines_walked, Operation::Replacement);
         }
         Ok(())
     }
