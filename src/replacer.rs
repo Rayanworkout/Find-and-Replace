@@ -24,26 +24,24 @@ impl Replacer {
         file_path: &PathBuf,
         line_number: usize,
     ) -> Result<()> {
-        if self.settings.write {
-            let mut file = File::open(file_path)
-                .with_context(|| format!("Could not open {}", file_path.display()))?;
+        let mut file = File::open(file_path)
+            .with_context(|| format!("Could not open {}", file_path.display()))?;
 
-            let mut file_content = String::new();
+        let mut file_content = String::new();
 
-            file.read_to_string(&mut file_content)?;
+        file.read_to_string(&mut file_content)?;
 
-            let mut lines: Vec<&str> = file_content.split('\n').collect();
+        let mut lines: Vec<&str> = file_content.split('\n').collect();
 
-            let updated_line = lines[line_number - 1].replace(old_pattern, new_pattern);
-            lines[line_number - 1] = &updated_line;
+        let updated_line = lines[line_number - 1].replace(old_pattern, new_pattern);
+        lines[line_number - 1] = &updated_line;
 
-            let updated_content = lines.join("\n");
+        let updated_content = lines.join("\n");
 
-            // Write the modified content back to the file
-            let mut writer = BufWriter::new(File::create(&file_path)?);
+        // Write the modified content back to the file
+        let mut writer = BufWriter::new(File::create(&file_path)?);
 
-            writer.write_all(updated_content.as_bytes())?;
-        }
+        writer.write_all(updated_content.as_bytes())?;
 
         Ok(())
     }

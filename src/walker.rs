@@ -162,6 +162,7 @@ impl Walker {
                     total_matches += matches.len();
 
                     let filename = entry.path().to_string_lossy();
+                    console.print_file_header(&filename);
 
                     for (line_number, line) in &matches {
                         match_index += 1;
@@ -170,7 +171,6 @@ impl Walker {
                         if self.settings.lookup {
                             console.print_lookup(
                                 line,
-                                &filename,
                                 &self.old_pattern,
                                 &line_number,
                                 match_index,
@@ -192,7 +192,6 @@ impl Walker {
                                 // In dry-run mode, only print the proposed change.
                                 console.print_changes(
                                     line,
-                                    &filename,
                                     &self.old_pattern,
                                     &self.new_pattern,
                                     &line_number,

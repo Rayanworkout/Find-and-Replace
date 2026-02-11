@@ -22,28 +22,28 @@ impl Console {
     pub fn print_lookup(
         &self,
         old_line: &str,
-        filename: &str,
         pattern: &str,
         line_number: &usize,
         match_index: usize,
     ) {
         let red_pattern = pattern.red().to_string();
         let red_old_content = old_line.replace(pattern, &red_pattern);
-       
+
         println!(
-            "\n[{}] {}\n(line {})\n{} {}",
+            "  [{}] line {}\n  {}",
             match_index,
-            filename.bold(),
             line_number,
-            "--".red(),
             red_old_content
         );
+    }
+
+    pub fn print_file_header(&self, filename: &str) {
+        println!("\n{}", filename.bold());
     }
 
     pub fn print_changes(
         &self,
         old_line: &str,
-        filename: &str,
         pattern: &str,
         new_pattern: &str,
         line_number: &usize,
@@ -58,9 +58,8 @@ impl Console {
         let green_new_content = parts.join(&green_pattern);
 
         println!(
-            "\n[{}] {}\n(line {})\n{} {}\n{} {}",
+            "  [{}] line {}\n  {} {}\n  {} {}",
             match_index,
-            filename.bold(),
             line_number,
             "--".red(),
             red_old_content,
@@ -94,7 +93,13 @@ Do not use --write when looking for content to replace."
         match operation {
             Operation::Match => {
                 if matches_count > 0 {
-                    println!("\n{}", format!("{} match{} found.\n{} line{} audited.\n\n> Re-run the command with --write to write changes to disk.", count, matches_plural, total_lines_walked, lines_walked_plural));
+                    println!(
+                        "\n{}",
+                        format!(
+                            "{} match{} found.\n{} line{} scanned.\nTip: use --write to apply.",
+                            count, matches_plural, total_lines_walked, lines_walked_plural
+                        )
+                    );
                 } else {
                     println!("\n{}", "No match found.".red());
                 }
@@ -103,7 +108,7 @@ Do not use --write when looking for content to replace."
                 println!(
                     "\n{}",
                     format!(
-                        "{} match{} replaced.\n{} line{} audited.",
+                        "{} match{} replaced.\n{} line{} scanned.",
                         count, matches_plural, total_lines_walked, lines_walked_plural
                     )
                 );
@@ -113,7 +118,7 @@ Do not use --write when looking for content to replace."
                     println!(
                         "\n{}",
                         format!(
-                            "{} match{} found.\n{} line{} audited.",
+                            "{} match{} found.\n{} line{} scanned.",
                             count, matches_plural, total_lines_walked, lines_walked_plural
                         )
                     );
