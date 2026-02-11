@@ -31,6 +31,22 @@ fnr [OPTIONS] <PATTERN> --lookup [PATH]
 
 `[PATH]` is optional. If omitted, `fnr` searches from the current directory.
 
+Complex query example (multiple filters + selective write):
+
+```bash
+fnr "todo" "done" --ignore-case --hidden --omit target/ node_modules/ --type *rs *toml --type-not *md --select 1-3 -v --write
+```
+
+What this does:
+- Finds `todo` and replaces with `done` (from current directory).
+- Uses case-insensitive matching (`--ignore-case`).
+- Includes hidden files (`--hidden`).
+- Skips `target/` and `node_modules/` (`--omit ...`).
+- Searches only `*.rs` and `*.toml` files (`--type *rs *toml`).
+- Excludes markdown files (`--type-not *md`).
+- Applies only matches `1` to `3` (`--select 1-3`).
+- Prints extra diagnostics (`-v`) and writes changes to disk (`--write`).
+
 ## Quick Notes
 
 - Replacement mode expects both `<PATTERN>` and `<NEW_PATTERN>`.
