@@ -98,7 +98,7 @@ impl Walker {
 
         walk_builder.types(types_matcher);
 
-        // Apply CLI omit filters at walker level so omitted directories are
+        // Apply CLI omit filters at _ level so omitted directories are
         // not descended into.
         let omit_patterns = self.settings.omit_pattern.clone();
         if !omit_patterns.is_empty() {
@@ -168,7 +168,7 @@ impl Walker {
                         // If the query is a lookup, we print the lookup
                         // without the changes
                         if self.settings.lookup {
-                            _ = console.print_lookup(
+                            console.print_lookup(
                                 line,
                                 &filename,
                                 &self.old_pattern,
@@ -178,44 +178,44 @@ impl Walker {
 
                             continue;
                         }
-
-                        // If the query is a dry-run, no need to call the replacer
-                        if !self.settings.write {
-                            _ = console.print_changes(
-                                line,
-                                &filename,
-                                &self.old_pattern,
-                                &self.new_pattern,
-                                &line_number,
-                                match_index,
-                            );
-
-                            continue;
+                        match self.settings.write {
+                            true => {
+                                // In write mode, apply the replacement to disk.
+                                replacer.replace(
+                                    &self.new_pattern,
+                                    &self.old_pattern,
+                                    &file_path,
+                                    *line_number,
+                                )?;
+                            }
+                            false => {
+                                // In dry-run mode, only print the proposed change.
+                                console.print_changes(
+                                    line,
+                                    &filename,
+                                    &self.old_pattern,
+                                    &self.new_pattern,
+                                    &line_number,
+                                    match_index,
+                                );
+                            }
                         }
-
-                        // If the query is neither a lookup or a dry-run, we need
-                        // to call the replacer
-                        replacer.replace(
-                            &self.new_pattern,
-                            &self.old_pattern,
-                            &file_path,
-                            *line_number,
-                        )?;
                     }
                 }
             }
         }
 
-        if !self.settings.write {
-            console.print_match_counts(total_matches, total_lines_walked, Operation::Match);
+        if self.settings.lookup {
+            console.print_matches_counts(total_matches, total_lines_walked, Operation::Lookup);
+        } else if !self.settings.write {
+            console.print_matches_counts(total_matches, total_lines_walked, Operation::Match);
         } else {
             if total_matches == 0 {
                 console.warn_bare_written();
             }
 
-            console.print_match_counts(total_matches, total_lines_walked, Operation::Replacement);
+            console.print_matches_counts(total_matches, total_lines_walked, Operation::Replacement);
         }
-        println!("{:?}", &self.settings.select);
         Ok(())
     }
 }

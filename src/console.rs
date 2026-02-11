@@ -81,7 +81,7 @@ Do not use --write when looking for content to replace."
     }
 
     /// Print the number of matches or replacements found
-    pub fn print_match_counts(
+    pub fn print_matches_counts(
         &self,
         matches_count: usize,
         total_lines_walked: i32,
@@ -107,6 +107,19 @@ Do not use --write when looking for content to replace."
                         count, matches_plural, total_lines_walked, lines_walked_plural
                     )
                 );
+            }
+            Operation::Lookup => {
+                if matches_count > 0 {
+                    println!(
+                        "\n{}",
+                        format!(
+                            "{} match{} found.\n{} line{} audited.",
+                            count, matches_plural, total_lines_walked, lines_walked_plural
+                        )
+                    );
+                } else {
+                    println!("\n{}", "No match found.".red());
+                }
             }
         }
     }
