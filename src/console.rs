@@ -31,9 +31,7 @@ impl Console {
 
         println!(
             "  [{}] line {}\n  {}",
-            match_index,
-            line_number,
-            red_old_content
+            match_index, line_number, red_old_content
         );
     }
 
@@ -68,15 +66,30 @@ impl Console {
         );
     }
 
-    /// Warn the user in case he used the --write flag but no match was found
-    pub fn warn_bare_written(&self) {
-        println!(
-            "{}",
-            "\nYou used the --write flag but no match was found.
-Be careful as this command would write changes to disk without confirmation.
-Do not use --write when looking for content to replace."
-                .red()
-        );
+    /// Warn the user when `--write` is enabled but nothing was replaced.
+    pub fn warn_no_replacement_applied(&self, found_matches: usize, used_select: bool) {
+        let safety_note = "\nBe careful: this command writes changes to disk without confirmation and cannot be undone.
+Do not use --write when looking for content to replace, either perform a dry-run or a lookup.";
+        
+        let message = if found_matches == 0 {
+            format!("\nYou used --write but no match was found.{}", safety_note)
+        } else if used_select {
+            format!(
+                "\nYou used --write with --select, but none of the found matches were selected.{}",
+                safety_note
+            )
+        } else {
+            // Impossible, this case happens when
+            // found_matches > 0 && used_select is false
+            // if found_matches > 0, no warning
+            // We keep this for syntax
+            format!(
+                "\nYou used --write but no replacement was applied.\nNo file was modified.{}",
+                safety_note
+            )
+        };
+
+        println!("{}", message.red());
     }
 
     /// Print the number of matches or replacements found

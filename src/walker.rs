@@ -229,7 +229,10 @@ impl Walker {
             console.print_matches_counts(total_found_matches, total_lines_walked, Operation::Match);
         } else {
             if total_replaced_matches == 0 {
-                console.warn_bare_written();
+                console.warn_no_replacement_applied(
+                    total_found_matches,
+                    self.settings.select.is_some(),
+                );
             }
 
             console.print_matches_counts(
