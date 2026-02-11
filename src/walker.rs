@@ -62,6 +62,7 @@ impl Walker {
         let types_matcher = types_builder.build()?;
 
         let mut walk_builder = WalkBuilder::new(&self.path);
+        walk_builder.add_custom_ignore_filename(".fnrignore");
 
         walk_builder.types(types_matcher);
 
@@ -69,6 +70,13 @@ impl Walker {
         if self.settings.search_hidden {
             walk_builder.hidden(false);
         }
+
+        
+        walk_builder.git_ignore(false);
+        walk_builder.git_global(false);
+        walk_builder.git_exclude(false);
+        walk_builder.ignore(false);
+
 
         Ok(walk_builder.build())
     }

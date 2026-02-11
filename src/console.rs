@@ -71,7 +71,7 @@ Do not use --write when looking for content to replace."
         match operation {
             Operation::Match => {
                 if matches_count > 0 {
-                    println!("\n{}", format!("{} match{} found.\n{} line{} audited.\nRe-run the command with --write to write changes to disk.", count, matches_plural, total_lines_walked, lines_walked_plural));
+                    println!("\n{}", format!("{} match{} found.\n{} line{} audited.\n> Re-run the command with --write to write changes to disk.", count, matches_plural, total_lines_walked, lines_walked_plural));
                 } else {
                     println!("\n{}", "No match found.".red());
                 }

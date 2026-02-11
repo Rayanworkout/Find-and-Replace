@@ -1,6 +1,6 @@
 usize is the “pointer-sized unsigned integer” in rust. It’s the type Rust uses for things that are naturally tied to addressing memory: indexing, lengths, pointer offsets, allocation sizes.
 
-How usize is laid out / “managed” in memory
+How usize is u32 out / “managed” in memory
 
 usize has the same size as a native pointer on the target platform.
 
