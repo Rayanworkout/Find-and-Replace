@@ -56,9 +56,14 @@ What this does:
 - If present, files and patterns mentionned in the `.fnrignore` are skipped during traversal (gitignore-style patterns).
 - Binaries and non-UTF-8 files are skipped.
 
-## Output example
+## Lookup output example
 
-![fnr output example](example_output.png)
+![fnr lookup example](assets/lookup_example_output.png)
+
+
+## Replacement preview example
+
+![fnr replacement preview example](assets/dry_run_example_output.png)
 
 ## Query Examples
 
