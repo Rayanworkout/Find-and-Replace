@@ -23,14 +23,18 @@ fnr [OPTIONS] <PATTERN> <NEW_PATTERN> [PATH]
 # or
 
 fnr <PATTERN> <NEW_PATTERN> [PATH] [OPTIONS]
+
+# lookup mode
+
+fnr [OPTIONS] <PATTERN> --lookup [PATH]
 ```
 
 `[PATH]` is optional. If omitted, `fnr` searches from the current directory.
 
 ## Quick Notes
 
-- `fnr` always expects both `<PATTERN>` and `<NEW_PATTERN>`.
-- Use `_` as a placeholder for `<NEW_PATTERN>` when you only want lookup output.
+- Replacement mode expects both `<PATTERN>` and `<NEW_PATTERN>`.
+- Lookup mode can be used with `--lookup` and no `<NEW_PATTERN>`.
 - `--write` applies replacements to files on disk.
 - Without `--write`, `fnr` only previews matches and suggested replacements.
 - If present, `.fnrignore` files are respected during traversal (gitignore-style patterns).
@@ -44,16 +48,16 @@ Find a pattern `hello` in files of the current folder without writing changes:
 fnr hello new
 ```
 
-Same lookup, but write changes to disk:
+Lookup only (no replacement):
 
 ```bash
-fnr hello new --write
+fnr hello --lookup
 ```
 
 Enable verbose mode for lookup or replacement:
 
 ```bash
-fnr hello _ --verbose # or -v
+fnr hello --lookup --verbose # or -v
 ```
 
 Case-insensitive matching:
@@ -99,7 +103,7 @@ fnr hello new --hidden --omit ~/Desktop/ ~/Desktop/foo
 Search only files matching a glob pattern inside home:
 
 ```bash
-fnr hello _ ~ --type *rs  # or -t *rs
+fnr hello --lookup ~ --type *rs  # or -t *rs
 ```
 
 Search using wildcard patterns. Match files ending with `some.txt`:
@@ -135,7 +139,7 @@ find ~/Desktop/ -type f -name "*txt" -exec cat {} \; | grep hello
 with `fnr`:
 
 ```bash
-fnr hello _ ~/Desktop/ -t *txt
+fnr hello --lookup ~/Desktop/ -t *txt
 ```
 
 Show help at any time:
@@ -157,6 +161,8 @@ fnr --help
           Print additional information about files searched or errors.
   -i, --ignore-case
           Perform a case-insensitive search. Default is case-sensitive.
+  -l, --lookup
+          Only perform a lookup instead of replacement.
   -t, --type [<SELECTED_FILE_TYPES>...]
           Only search files matching <file_type> or glob pattern.
   -T, --type-not [<IGNORED_FILE_TYPES>...]

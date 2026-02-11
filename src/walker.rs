@@ -95,22 +95,19 @@ impl Walker {
         let mut total_matches = 0;
         let mut total_lines_walked: i32 = 0;
 
-        // If the new pattern is "_", no replacement
-        
-
         for entry in walker {
             let entry = entry
                 .with_context(|| "Could not read directory entry. Maybe try with sudo ?".red())?;
 
             // Check if path is not in the omit list with any()
-            if self
-                .settings
-                .omit_pattern
-                .iter()
-                .any(|omit| entry.path().starts_with(omit))
-            {
-                continue;
-            }
+            // if self
+            //     .settings
+            //     .omit_pattern
+            //     .iter()
+            //     .any(|omit| entry.path().starts_with(omit))
+            // {
+            //     continue;
+            // }
 
             if let Some(file_type) = entry.file_type() {
                 if file_type.is_file() {

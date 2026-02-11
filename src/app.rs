@@ -15,9 +15,9 @@ Examples:
     
     $ fnr old
 
-    For any lookup, you can activate verbose mode
+    To perform a simple lookup, you can activate lookup mode
 
-    $ fnr old --verbose // or -v
+    $ fnr old --lookup // or -l
 
     You can also choose to perform a case-insensitive search
 
@@ -86,6 +86,13 @@ pub struct Options {
     )]
     pub ignore_case: bool,
 
+    #[clap(
+        long,
+        short,
+        help = "Only perform a lookup instead of replacement, defaults to false."
+    )]
+    pub lookup: bool,
+
     #[arg(
         short = 't',
         long = "type",
@@ -116,6 +123,7 @@ pub fn run() -> Result<()> {
         omit,
         verbose,
         ignore_case,
+        lookup,
         selected_file_types,
         ignored_file_types,
         write,
@@ -126,6 +134,7 @@ pub fn run() -> Result<()> {
         omit_pattern: omit,
         search_hidden: hidden,
         ignore_case,
+        lookup,
         selected_file_types,
         ignored_file_types,
         write,

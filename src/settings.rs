@@ -18,4 +18,8 @@ pub struct Settings {
     /// If true, changes are written to disk
     /// (default: false)
     pub write: bool,
+
+    /// If true, perform only a lookup, no replacement involved.
+    /// (default: false)
+    pub lookup: bool,
 }
