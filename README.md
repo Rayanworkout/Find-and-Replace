@@ -2,7 +2,18 @@
 
 Fast recursive search and replace for files, built with Rust.
 
-## Installation (Linux)
+## Installation
+
+### Prebuilt binaries (recommended)
+
+Download the latest binaries directly from [GitHub Releases](https://github.com/Rayanworkout/Find-and-Replace/releases).
+
+Available targets include:
+- Windows x64
+- Linux AMD64
+- Linux ARM64
+
+### Build from source (development)
 
 _You need `Rust` and `Cargo` installed. Official installation steps are available [here](https://www.rust-lang.org/tools/install)._
 
