@@ -1,5 +1,6 @@
 use crate::enums::Operation;
 use colored::Colorize;
+use num_format::{Locale, ToFormattedString};
 
 #[derive(Clone)]
 pub struct Console {}
@@ -113,6 +114,9 @@ Do not use --write when looking for content to replace, either perform a dry-run
         let matches_plural = if matches_count > 1 { "es" } else { "" };
         let lines_walked_plural = if total_lines_walked > 1 { "s" } else { "" };
         let count = matches_count.to_string().green().bold();
+        let formatted_total_lines_walked = total_lines_walked.to_formatted_string(&Locale::en);
+
+        let total_lines_walked = formatted_total_lines_walked.to_string().blue().bold();
 
         let selected_matches_str = if selected_matches_count > 0 {
             format!(" ({selected_matches_count} selected)")
