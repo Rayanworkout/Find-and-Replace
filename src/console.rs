@@ -109,16 +109,21 @@ Do not use --write when looking for content to replace, either perform a dry-run
         matches_count: usize,
         selected_matches_count: usize,
         total_lines_walked: i32,
+        select_param: &Option<Vec<usize>>,
         operation: Operation,
     ) {
+        // --- plural suffixes ---
         let matches_plural = if matches_count > 1 { "es" } else { "" };
         let lines_walked_plural = if total_lines_walked > 1 { "s" } else { "" };
-        let count = matches_count.to_string().green().bold();
-        let formatted_total_lines_walked = total_lines_walked.to_formatted_string(&Locale::en);
 
-        let total_lines_walked = formatted_total_lines_walked.to_string().blue().bold();
+        // --- formatted + styled numbers ---
+        let matches_count_styled = matches_count.to_string().green().bold();
 
-        let selected_matches_str = if selected_matches_count > 0 {
+        let total_lines_walked_formatted = total_lines_walked.to_formatted_string(&Locale::en);
+        let total_lines_walked_styled = total_lines_walked_formatted.blue().bold();
+
+        // --- optional "selected" suffix ---
+        let selected_matches_str = if select_param.is_some() {
             format!(" ({selected_matches_count} selected)")
         } else {
             String::new()
@@ -131,10 +136,10 @@ Do not use --write when looking for content to replace, either perform a dry-run
                         "\n{}",
                         format!(
                             "{} match{} found{}.\n{} line{} scanned.\nTip: use --write to apply.",
-                            count,
+                            matches_count_styled,
                             matches_plural,
                             selected_matches_str,
-                            total_lines_walked,
+                            total_lines_walked_styled,
                             lines_walked_plural
                         )
                     );
@@ -142,7 +147,7 @@ Do not use --write when looking for content to replace, either perform a dry-run
                     println!(
                         "\n{}\n{} line{} scanned.",
                         "No match found.".red(),
-                        total_lines_walked,
+                        total_lines_walked_styled,
                         lines_walked_plural
                     );
                 }
@@ -152,10 +157,10 @@ Do not use --write when looking for content to replace, either perform a dry-run
                     "\n{}",
                     format!(
                         "{} match{} replaced{}.\n{} line{} scanned.",
-                        count,
+                        matches_count_styled,
                         matches_plural,
                         selected_matches_str,
-                        total_lines_walked,
+                        total_lines_walked_styled,
                         lines_walked_plural
                     )
                 );
@@ -166,7 +171,10 @@ Do not use --write when looking for content to replace, either perform a dry-run
                         "\n{}",
                         format!(
                             "{} match{} found.\n{} line{} scanned.",
-                            count, matches_plural, total_lines_walked, lines_walked_plural
+                            matches_count_styled,
+                            matches_plural,
+                            total_lines_walked_styled,
+                            lines_walked_plural
                         )
                     );
                 } else {

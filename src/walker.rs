@@ -237,6 +237,7 @@ impl Walker {
                 total_found_matches,
                 selected_matches_count,
                 total_lines_walked,
+                &self.settings.select,
                 Operation::Lookup,
             );
 
@@ -258,6 +259,7 @@ impl Walker {
                     total_replaced_matches,
                     selected_matches_count,
                     total_lines_walked,
+                    &self.settings.select,
                     Operation::Replacement,
                 );
             }
@@ -267,6 +269,7 @@ impl Walker {
                     total_found_matches,
                     selected_matches_count,
                     total_lines_walked,
+                    &self.settings.select,
                     Operation::Match,
                 );
             }
