@@ -128,13 +128,13 @@ fnr hello new --hidden --omit ~/Desktop/ ~/Desktop/foo
 Replace only selected occurrences by index:
 
 ```bash
-fnr hello new . --write --select 1 2 3
+fnr hello new --write --select 1 2 3
 ```
 
 Replace a range of occurrences:
 
 ```bash
-fnr hello new . --write --select 1-3
+fnr hello new --write --select 1-3
 ```
 
 Search only files matching a glob pattern inside home:

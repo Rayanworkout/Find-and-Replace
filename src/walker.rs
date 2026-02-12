@@ -225,22 +225,37 @@ impl Walker {
                 total_lines_walked,
                 Operation::Lookup,
             );
-        } else if !self.settings.write {
-            console.print_matches_counts(total_found_matches, total_lines_walked, Operation::Match);
-        } else {
-            if total_replaced_matches == 0 {
-                console.warn_no_replacement_applied(
-                    total_found_matches,
-                    self.settings.select.is_some(),
+
+            return Ok(());
+        }
+
+        match self.settings.write {
+            true => {
+                // NO MATCH AND WRITE IS TRUE
+                if total_replaced_matches == 0 {
+                    console.warn_no_replacement_applied(
+                        total_found_matches,
+                        self.settings.select.is_some(),
+                    );
+                }
+
+                // PRINT REPLACEMENTS
+                console.print_matches_counts(
+                    total_replaced_matches,
+                    total_lines_walked,
+                    Operation::Replacement,
                 );
             }
-
-            console.print_matches_counts(
-                total_replaced_matches,
-                total_lines_walked,
-                Operation::Replacement,
-            );
+            false => {
+                // PRINT MATCHES
+                console.print_matches_counts(
+                    total_found_matches,
+                    total_lines_walked,
+                    Operation::Match,
+                );
+            }
         }
+
         Ok(())
     }
 }

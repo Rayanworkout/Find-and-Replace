@@ -70,7 +70,7 @@ impl Console {
     pub fn warn_no_replacement_applied(&self, found_matches: usize, used_select: bool) {
         let safety_note = "\nBe careful: this command writes changes to disk without confirmation and cannot be undone.
 Do not use --write when looking for content to replace, either perform a dry-run or a lookup.";
-        
+
         let message = if found_matches == 0 {
             format!("\nYou used --write but no match was found.{}", safety_note)
         } else if used_select {
@@ -114,7 +114,12 @@ Do not use --write when looking for content to replace, either perform a dry-run
                         )
                     );
                 } else {
-                    println!("\n{}", "No match found.".red());
+                    println!(
+                        "\n{}\n{} line{} scanned.",
+                        "No match found.".red(),
+                        total_lines_walked,
+                        lines_walked_plural
+                    );
                 }
             }
             Operation::Replacement => {
