@@ -140,6 +140,8 @@ impl Walker {
         // We keep track of matches found for indexes
         let mut match_index = 0;
 
+        let mut selected_matches_count = 0;
+
         for entry in walker {
             let entry = entry.with_context(|| {
                 "Could not read directory entry. Maybe try with elevated privileges ?".red()
@@ -185,10 +187,6 @@ impl Walker {
                                 // If this match is not included, we continue the loop
                                 match &self.settings.select {
                                     Some(select) if !select.contains(&match_index) => {
-                                        println!(
-                                            "  [{}] line {} - match not selected for replacement, skipping.",
-                                            match_index, line_number
-                                        );
                                         continue;
                                     }
                                     _ => {}
@@ -204,6 +202,20 @@ impl Walker {
                                 total_replaced_matches += 1;
                             }
                             false => {
+                                // If the user provide a select list
+                                // Elements that are not in the select
+                                let match_must_be_greyed = self
+                                    .settings
+                                    .select
+                                    .as_ref()
+                                    .is_some_and(|select| !select.contains(&match_index));
+
+                                if match_must_be_greyed == false
+                                    && self.settings.select.as_ref().is_some()
+                                {
+                                    selected_matches_count += 1;
+                                }
+
                                 // In dry-run mode, only print the proposed change.
                                 console.print_changes(
                                     line,
@@ -211,6 +223,7 @@ impl Walker {
                                     &self.new_pattern,
                                     &line_number,
                                     match_index,
+                                    &match_must_be_greyed,
                                 );
                             }
                         }
@@ -222,6 +235,7 @@ impl Walker {
         if self.settings.lookup {
             console.print_matches_counts(
                 total_found_matches,
+                selected_matches_count,
                 total_lines_walked,
                 Operation::Lookup,
             );
@@ -242,6 +256,7 @@ impl Walker {
                 // PRINT REPLACEMENTS
                 console.print_matches_counts(
                     total_replaced_matches,
+                    selected_matches_count,
                     total_lines_walked,
                     Operation::Replacement,
                 );
@@ -250,6 +265,7 @@ impl Walker {
                 // PRINT MATCHES
                 console.print_matches_counts(
                     total_found_matches,
+                    selected_matches_count,
                     total_lines_walked,
                     Operation::Match,
                 );

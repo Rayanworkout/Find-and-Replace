@@ -46,23 +46,33 @@ impl Console {
         new_pattern: &str,
         line_number: &usize,
         match_index: usize,
+        match_must_be_greyed: &bool,
     ) {
         let parts: Vec<&str> = old_line.split(pattern).collect();
 
-        let red_pattern = pattern.red().to_string();
-        let green_pattern = new_pattern.green().to_string();
+        // Greyed style for "not selected"
+        let (old_pat, new_pat, minus, plus) = if *match_must_be_greyed {
+            (
+                pattern.bright_black().to_string(),     // grey old match
+                new_pattern.bright_black().to_string(), // grey new match
+                "--".bright_black().to_string(),
+                "++".bright_black().to_string(),
+            )
+        } else {
+            (
+                pattern.red().to_string(),
+                new_pattern.green().to_string(),
+                "--".red().to_string(),
+                "++".green().to_string(),
+            )
+        };
 
-        let red_old_content = parts.join(&red_pattern);
-        let green_new_content = parts.join(&green_pattern);
+        let old_content = parts.join(&old_pat);
+        let new_content = parts.join(&new_pat);
 
         println!(
             "  [{}] line {}\n  {} {}\n  {} {}",
-            match_index,
-            line_number,
-            "--".red(),
-            red_old_content,
-            "++".green(),
-            green_new_content
+            match_index, line_number, minus, old_content, plus, new_content
         );
     }
 
@@ -96,6 +106,7 @@ Do not use --write when looking for content to replace, either perform a dry-run
     pub fn print_matches_counts(
         &self,
         matches_count: usize,
+        selected_matches_count: usize,
         total_lines_walked: i32,
         operation: Operation,
     ) {
@@ -103,14 +114,24 @@ Do not use --write when looking for content to replace, either perform a dry-run
         let lines_walked_plural = if total_lines_walked > 1 { "s" } else { "" };
         let count = matches_count.to_string().green().bold();
 
+        let selected_matches_str = if selected_matches_count > 0 {
+            format!(" ({selected_matches_count} selected)")
+        } else {
+            String::new()
+        };
+
         match operation {
             Operation::Match => {
                 if matches_count > 0 {
                     println!(
                         "\n{}",
                         format!(
-                            "{} match{} found.\n{} line{} scanned.\nTip: use --write to apply.",
-                            count, matches_plural, total_lines_walked, lines_walked_plural
+                            "{} match{} found{}.\n{} line{} scanned.\nTip: use --write to apply.",
+                            count,
+                            matches_plural,
+                            selected_matches_str,
+                            total_lines_walked,
+                            lines_walked_plural
                         )
                     );
                 } else {
@@ -126,8 +147,12 @@ Do not use --write when looking for content to replace, either perform a dry-run
                 println!(
                     "\n{}",
                     format!(
-                        "{} match{} replaced.\n{} line{} scanned.",
-                        count, matches_plural, total_lines_walked, lines_walked_plural
+                        "{} match{} replaced{}.\n{} line{} scanned.",
+                        count,
+                        matches_plural,
+                        selected_matches_str,
+                        total_lines_walked,
+                        lines_walked_plural
                     )
                 );
             }
